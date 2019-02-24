@@ -1,0 +1,30 @@
+[
+    {
+        "Name": "Practica1",
+        "possible_names": ["practica1.sql, practica01.sql, practica 1.sql", "p1.sql", "practica uno.sql"],
+        "number": 1,
+        "start_date": "11-02-2019 12:00",
+        "due_date": "18-02-2019 11:59",
+        "due_value": 3,
+        "review_rules": [{
+            "value": 7,
+            "regex": ".*",
+            "group": 0,
+            "times": 1
+        }]
+    },
+    {
+        "Name": "Practica2",
+        "possible_names": ["practica 2", "p2", "practica dos"],
+        "number": 2,
+        "start_date": "18-02-2019 12:00",
+        "due_date": "25-02-2019 11:59",
+        "due_value": 3,
+        "review_rules": [{
+            "value": 7,
+            "regex": ".*",
+            "group": 0,
+            "times": 1
+        }]
+    }
+]
