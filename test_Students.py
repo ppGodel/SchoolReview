@@ -9,7 +9,7 @@ LBD = 'LBD'
 class TestAlumno(TestCase):
 
     def test_get_alumno(self):
-        sb = StudentBuilder("ppgodel", "101tarez")
+        sb = StudentBuilder()
         a = sb.build_student("1186622", LDOO, "github.com")
         self.assertIsNone(a)
         a = sb.build_student("1186622", LDOO, "http://github.com/")
