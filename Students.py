@@ -61,10 +61,6 @@ class RepositoryQuerier:
         self.auth_user = auth_user
         self.auth_pass = auth_pass
 
-    def __init__(self):
-        self.auth_user = None
-        self.auth_pass = None
-
     @staticmethod
     def get_parameters(**params):
         parameters = None
@@ -77,7 +73,7 @@ class RepositoryQuerier:
         return url_template.format(**kwargs)
 
     @staticmethod
-    def get_url(base_url: str, params: str)
+    def get_url(base_url: str, params: str):
         return "{base}?{parameters}".format(base=base_url, parameters=params)
 
     def get_repository_list(self, site: str, user: str):
@@ -190,23 +186,28 @@ class CourseBuilder:
 
 
 class StudentBuilder:
+    def __init__(self, auth_user: str, auth_pass: str):
+        querier = RepositoryQuerier(auth_user, auth_pass)
+
     def build_student(self, matricula: str, class_name: str, url: str):
-        site, user, repo, = self.get_repo_info(url, LDOO)
+        site, user, repo, = self.get_repo_info(url, class_name)
         class_mate = ClassMate(matricula, class_name, site, user, repo) if site and user else None
         return class_mate
 
-    @staticmethod
-    def get_repo_info(url: str, class_name: str):
+    def get_repo_info(self, url: str, class_name: str):
         site = user = repo = None
-        base_url = StudentBuilder._remove_protocol_from_url(url)
-        url_pieces = base_url.split('/')
-        pieces = len(url_pieces)
-        if pieces > 1 and url_pieces[0] and url_pieces[1]:
-            site = StudentBuilder._format_site(url_pieces[0])
-            user = url_pieces[1]
-            if pieces > 2 and url_pieces[2]:
-                repo = StudentBuilder._format_repo(url_pieces[2])
-        return StudentBuilder._validate_repository(site, user, repo, class_name)
+        try:
+            base_url = StudentBuilder._remove_protocol_from_url(url)
+            url_pieces = base_url.split('/')
+            pieces = len(url_pieces)
+            if pieces > 1 and url_pieces[0] and url_pieces[1]:
+                site = StudentBuilder._format_site(url_pieces[0])
+                user = url_pieces[1]
+                if pieces > 2 and url_pieces[2]:
+                    repo = StudentBuilder._format_repo(url_pieces[2])
+        except Exception as e:
+            print("No valid repo for {}, {}".format(url, e))
+        return self._validate_repository(site, user, repo, class_name)
 
     @staticmethod
     def _format_repo(repo_raw: str):
@@ -230,11 +231,10 @@ class StudentBuilder:
             return_url = url.replace(is_match.group(0), '')
         return return_url
 
-    @staticmethod
-    def _validate_repository(site, user, repo, class_name):
+    def _validate_repository(self, site, user, repo, class_name):
         validated_site = validated_user = validated_repo = repo_list = None
         if site and user:
-            repo_list = RepositoryQuerier.get_repository_list_by(site, user, 'name')
+            repo_list = self.querier.get_repository_list_by(site, user, 'name')
         if repo_list:
             validated_site = site
             validated_user = user

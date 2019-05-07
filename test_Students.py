@@ -9,7 +9,7 @@ LBD = 'LBD'
 class TestAlumno(TestCase):
 
     def test_get_alumno(self):
-        sb = StudentBuilder()
+        sb = StudentBuilder("ppgodel", "101tarez")
         a = sb.build_student("1186622", LDOO, "github.com")
         self.assertIsNone(a)
         a = sb.build_student("1186622", LDOO, "http://github.com/")
@@ -25,7 +25,7 @@ class TestAlumno(TestCase):
 
     def test_from_file(self):
         columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido", "Grupo"]
-        a = CourseBuilder.build_course_from_csv("test/resources/LDOO_EJ_19.csv", 'Repositorio', columns)
+        a = CourseBuilder.build_course_from_csv("test/resources/students.csv", 'direccion de tu repositorio GIT', columns)
         a.to_csv('test/resources/LDOO_repos.csv', sep=',', encoding='utf-8', index=False)
         self.assertIsNotNone(a)
-        import pandas
+        #import pandas
