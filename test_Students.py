@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from Students import  StudentBuilder, CourseBuilder
+import json
 
 LDOO = 'LDOO'
 LBD = 'LBD'
@@ -8,7 +9,9 @@ LBD = 'LBD'
 
 class TestAlumno(TestCase):
     def _arrange(self):
-        self.sb = StudentBuilder("ppgodel", "101tarez")
+        with open('test/resources/my_data.json') as f:
+            my_data = json.load(f)
+        self.sb = StudentBuilder(my_data["auth_user"], my_data["auth_pass"])
         self.cb = CourseBuilder(self.sb)
 
 
