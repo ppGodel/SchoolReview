@@ -1,6 +1,10 @@
 import re
+from collections import Callable
+from types import FunctionType
+
 import pandas as pd
 import requests
+
 # import datetime
 
 LDOO = 'LDOO'
@@ -63,26 +67,32 @@ class RepositoryQuerier:
 
     def get_repository_list(self, site: str, user: str):
         base_url = get_base_url("https://api.{site}/users/{user}/repos",
-                                           **{"site": site, "user": user})
-        parameters = map_parameters(**{"user": self.auth_user, "pwd": self.auth_pass})
+                                **{"site": site, "user": user})
+        parameters = map_parameters(**{"client_id": self.auth_user, "client_secret": self.auth_pass})
         url = get_url(base_url, parameters)
         return get_response_json(url)
 
     def get_commit_list_of_a_file(self, site, user, repo, file_path):
-        base_url = get_base_url("https://api.{site}/repos/{user}/{repo}/commits", **{"site": site, "user": user, "reop": repo})
-        params = map_parameters(**{"user": self.auth_user, "pwd": self.auth_pass, "path": file_path})
-        url = get_url(base_url,params)
+        base_url = get_base_url("https://api.{site}/repos/{user}/{repo}/commits",
+                                **{"site": site, "user": user, "reop": repo})
+        parameters = map_parameters(
+            **{"client_id": self.auth_user, "client_secret": self.auth_pass, "path": file_path})
+        url = get_url(base_url, parameters)
         return get_response_json(url)
 
-
     def get_file_info(self, site, user, repo, file_path):
-        url = "https://apih.{site}/repos/{user}/{repo}/contents/{file}". \
+        base_url = "https://api.{site}/repos/{user}/{repo}/contents/{file}". \
             format(site=site, user=user, repo=repo, file=file_path)
+        parameters = map_parameters(**{"client_id": self.auth_user, "client_secret": self.auth_pass})
+        url = get_url(base_url, parameters)
         return get_response_json(url)
 
     def get_file(self, site, user, repo, file_path):
-        file_info = self.get_file_info(site, user, repo, file_path)
-        if not file_info or len(file_info) > 1:
+        try:
+            file_info = self.get_file_info(site, user, repo, file_path)
+        except Exception as e:
+            print("Error found at get file from url {}".format(e))
+        if not file_info:
             return None
         download_url = file_info.get('download_url')
         return get_response_content(download_url)
@@ -94,22 +104,24 @@ class RepositoryQuerier:
         return [x.get(prop) for x in repo_list]
 
 
-
 class CourseBuilder:
     def __init__(self, student_builder):
         self.student_builder = student_builder
 
-    def build_course_from_csv(self, csv_path: str, git_column: str, columns: list):
+    def build_course_from_csv(self, csv_path: str, git_column: str, base_column_names: list,
+                              new_column_names: list):
         students_df = pd.read_csv(csv_path)
         dfr = self.process_df(students_df, git_column)
         dfr.columns = ['repo_site', 'repo_user', 'repo_name']
-        base_df = students_df.loc[:, columns]
+        base_df = students_df.loc[:, base_column_names]
+        base_df.rename(columns=dict(zip(base_column_names, new_column_names)), inplace=True)
         new_df = pd.concat([base_df, dfr], axis=1)
         return new_df
 
     def process_df(self, students_df: pd.DataFrame, git_column: str):
-        return students_df.apply(lambda row: self.student_builder.get_repo_info(row.get(git_column), LBD),
-                                 axis='columns', result_type='expand')
+        return students_df.apply(
+            lambda row: self.student_builder.get_repo_info(row.get(git_column), LBD),
+            axis='columns', result_type='expand')
     # @staticmethod
     # def build_course_from_csv(csv_path: str, practice_dict: dict):
     #     students_df = pd.read_csv(csv_path)
@@ -214,8 +226,7 @@ def get_base_url(url_template: str, **kwargs):
     return url_template.format(**kwargs)
 
 
-
-
+def curry(f: FunctionType) -> FunctionType: return lambda a: lambda b: f(a, b)
 
 # def review_student_practice(repo_site: str, repo_user: str, repo_name: str, practice_obj: dict):
 #     p_due_date = datetime.datetime.strptime(practice_obj.get('due_date'), "%Y-%m-%d %H:%M")

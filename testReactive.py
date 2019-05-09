@@ -7,7 +7,7 @@ from rx.core import Observer, typing
 
 
 async def send_request_to(url, observer):
-    process_time = random.randint(0, 4)
+    process_time = random.randint(0, 10)
     print("send request {}, will wait {} seconds".format(url, process_time))
     await asyncio.sleep(process_time)
     observer.on_next({"url": url, "time": process_time})
@@ -50,20 +50,21 @@ class RxAsyncRequest(Observer):
         print("Error: {}".format(error))
 
 
-# some_urls = ["google", "youtube", "twitter", "stackoverflow", "localhost"]
-# print("urls in order to be queried")
-# print(some_urls)
-# source = rx.create(rx_url_loop(some_urls))
-#
-# source.pipe(op.filter(lambda x: x.get("time") % 2 == 0),
-#     op.map(lambda x: {"url": x.get("url").upper(), "time": x.get("time")}),
-#     op.map(lambda x: "Received: {0}, has successfully completed after {1} seconds"
-#               .format(x.get("url"), x.get("time")))).subscribe(RxAsyncRequest())
+some_urls = ["google", "youtube", "twitter", "stackoverflow", "localhost"]
+print("urls in order to be queried")
+print(some_urls)
+source = rx.create(rx_url_loop(some_urls))
+
+source.pipe(op.filter(lambda x: x.get("time") % 2 == 0),
+    op.map(lambda x: {"url": x.get("url").upper(), "time": x.get("time")}),
+    op.map(lambda x: "Received: {0}, has successfully completed after {1} seconds"
+              .format(x.get("url"), x.get("time")))).subscribe(RxAsyncRequest())
 
 
-other_urls = ["yahoo", "vk", "instagram", "reddit", "noip"]
-source2 = of(*other_urls)
-source2.pipe(
-    op.map(lambda s: len(s)),
-    op.filter(lambda s: s > 5)
-).subscribe(RxAsyncRequest())
+# other_urls = ["yahoo", "vk", "instagram", "reddit", "noip"]
+# print(other_urls)
+# source2 = of(*other_urls)
+# source2.pipe(
+#     op.map(lambda s: len(s)),
+#     op.filter(lambda s: s > 5)
+# ).subscribe(RxAsyncRequest())

@@ -11,7 +11,7 @@ class TestAlumno(TestCase):
     def _arrange(self):
         with open('test/resources/my_data.json') as f:
             my_data = json.load(f)
-        self.sb = StudentBuilder(my_data["auth_user"], my_data["auth_pass"])
+        self.sb = StudentBuilder(my_data["client_id"], my_data["client_secret"])
         self.cb = CourseBuilder(self.sb)
 
 
@@ -32,8 +32,12 @@ class TestAlumno(TestCase):
 
     def test_from_file(self):
         self._arrange()
-        columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido", "Grupo"]
-        a = self.cb.build_course_from_csv("test/resources/students.csv", ' direccion de tu repositorio GIT', columns)
+        # columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido", "Grupo"]
+        base_columns = ["Matricula", "Nombre(s)", "Primer Apellido", "Segundo Apellido", "Grupo"]
+        new_columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido", "Grupo"]
+        a = self.cb.build_course_from_csv(
+            "test/resources/students.csv", ' direccion de tu repositorio GIT',
+            base_columns, new_columns)
         a.to_csv('test/resources/LDOO_repos.csv', sep=',', encoding='utf-8', index=False)
         self.assertIsNotNone(a)
         #import pandas

@@ -10,7 +10,7 @@ from rx.concurrency import ThreadPoolScheduler
 
 def intense_calculation(value):
     # sleep for a random short duration between 0.5 to 2.0 seconds to simulate a long-running calculation
-    time.sleep(random.randint(5, 20) * .1)
+    time.sleep(random.randint(5, 20) )
     return value
 
 
