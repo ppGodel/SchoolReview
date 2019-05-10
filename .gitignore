@@ -104,3 +104,4 @@ venv.bak/
 .mypy_cache/
 
 test/resources/my_data.json
+.idea/
