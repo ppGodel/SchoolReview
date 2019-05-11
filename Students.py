@@ -1,6 +1,7 @@
 import re
 from collections import Callable
 from types import FunctionType
+from typing import Optional, Union
 
 import pandas as pd
 import requests
@@ -65,14 +66,14 @@ class RepositoryQuerier:
         self.auth_user = auth_user
         self.auth_pass = auth_pass
 
-    def get_repository_list(self, site: str, user: str):
+    def get_repository_list(self, site: str, user: str) -> dict:
         base_url = get_base_url("https://api.{site}/users/{user}/repos",
                                 **{"site": site, "user": user})
         parameters = map_parameters(**{"client_id": self.auth_user, "client_secret": self.auth_pass})
         url = get_url(base_url, parameters)
         return get_response_json(url)
 
-    def get_commit_list_of_a_file(self, site, user, repo, file_path):
+    def get_commit_list_of_a_file(self, site, user, repo, file_path) -> list[dict]:
         base_url = get_base_url("https://api.{site}/repos/{user}/{repo}/commits",
                                 **{"site": site, "user": user, "reop": repo})
         parameters = map_parameters(
@@ -80,14 +81,15 @@ class RepositoryQuerier:
         url = get_url(base_url, parameters)
         return get_response_json(url)
 
-    def get_file_info(self, site, user, repo, file_path):
+    def get_file_info(self, site: str, user: str, repo: str, file_path: str) -> Optional[Union[list[dict],dict]]:
         base_url = "https://api.{site}/repos/{user}/{repo}/contents/{file}". \
             format(site=site, user=user, repo=repo, file=file_path)
         parameters = map_parameters(**{"client_id": self.auth_user, "client_secret": self.auth_pass})
         url = get_url(base_url, parameters)
         return get_response_json(url)
 
-    def get_file(self, site, user, repo, file_path):
+    def get_file(self, site, user, repo, file_path) -> bytes:
+        file_info = None
         try:
             file_info = self.get_file_info(site, user, repo, file_path)
         except Exception as e:
@@ -195,7 +197,7 @@ def _remove_protocol_from_url(url: str):
     return return_url
 
 
-def get_response_content(download_url):
+def get_response_content(download_url) -> bytes:
     content = None
     response = requests.get(download_url)
     if response.status_code >= 200 <= 250:
@@ -203,7 +205,7 @@ def get_response_content(download_url):
     return content
 
 
-def get_response_json(url):
+def get_response_json(url) -> dict:
     response = requests.get(url)
     json = None
     if response.status_code >= 200 <= 250:
@@ -226,7 +228,6 @@ def get_base_url(url_template: str, **kwargs):
     return url_template.format(**kwargs)
 
 
-def curry(f: FunctionType) -> FunctionType: return lambda a: lambda b: f(a, b)
 
 # def review_student_practice(repo_site: str, repo_user: str, repo_name: str, practice_obj: dict):
 #     p_due_date = datetime.datetime.strptime(practice_obj.get('due_date'), "%Y-%m-%d %H:%M")

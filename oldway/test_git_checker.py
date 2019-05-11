@@ -1,5 +1,5 @@
 from unittest import TestCase
-from GitChecker import *
+from oldway.GitChecker import *
 
 
 class TestPracticeChecker(TestCase):
