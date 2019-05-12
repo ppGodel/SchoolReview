@@ -1,12 +1,20 @@
 import re
-from collections import Callable
-from types import FunctionType
-from typing import Optional, Union
+from dataclasses import dataclass
+from functools import partial
+from typing import Optional, Union, Tuple, List, Dict, Callable
 
 import pandas as pd
 import requests
 
-# import datetime
+
+@dataclass
+class Student:
+    student_id: str
+    class_name: str
+    git_site: str
+    git_user: str
+    git_repo: str
+
 
 LDOO = 'LDOO'
 LBD = 'LBD'
@@ -17,153 +25,113 @@ possible_repositories = dict(LDOO=["LDOO_EJ_19", "LDOO", "LDOO_EJ_2019", "LDOO_E
                              LBD=['LBD', 'BD', 'BaseDeDatos'])
 
 
-class Course:
-    name: str
-
-    def __init__(self, name):
-        self.name = name
-
-
-class Student:
-    student_id: str
-    name: str
-    first_name: str
-    second_name: str
-    gender: str
-
-    def __init__(self, student_id, name, first_name, second_name, gender, age):
-        self.student_id = student_id
-        self.name = name
-        self.first_name = first_name
-        self.second_name = second_name
-        self.gender = gender
-        self.age = age
+def github_get_repository_list(client_id: str, client_secret: str, site: str, user: str) -> Dict:
+    base_url = get_base_url("https://api.{site}/users/{user}/repos",
+                            **{"site": site, "user": user})
+    parameters = map_parameters(**{"client_id": client_id, "client_secret": client_secret})
+    url = get_url(base_url, parameters)
+    return get_response_json(url)
 
 
-class ClassMate:
-    student_id: str
-    class_name: str
-    site: str
-    user: str
-    repo: str
-
-    def __init__(self, student_id, class_name, site, user, repo):
-        self.student_id = student_id
-        self.class_name = class_name
-        self.site = site
-        self.user = user
-        self.repo = repo
-
-    # def get_repository_list(self):
-    #     return RepositoryQuerier.get_repository_list_by(self.site, self.user, 'name')
+def github_get_commit_list_of_a_file(client_id: str, client_secret: str, site, user, repo, file_path) -> List[Dict]:
+    base_url = get_base_url("https://api.{site}/repos/{user}/{repo}/commits",
+                            **{"site": site, "user": user, "reop": repo})
+    parameters = map_parameters(
+        **{"client_id": client_id, "client_secret": client_secret, "path": file_path})
+    url = get_url(base_url, parameters)
+    return get_response_json(url)
 
 
-class RepositoryQuerier:
-    auth_user: str
-    auth_pass: str
-
-    def __init__(self, auth_user: str, auth_pass: str):
-        self.auth_user = auth_user
-        self.auth_pass = auth_pass
-
-    def get_repository_list(self, site: str, user: str) -> dict:
-        base_url = get_base_url("https://api.{site}/users/{user}/repos",
-                                **{"site": site, "user": user})
-        parameters = map_parameters(**{"client_id": self.auth_user, "client_secret": self.auth_pass})
-        url = get_url(base_url, parameters)
-        return get_response_json(url)
-
-    def get_commit_list_of_a_file(self, site, user, repo, file_path) -> list[dict]:
-        base_url = get_base_url("https://api.{site}/repos/{user}/{repo}/commits",
-                                **{"site": site, "user": user, "reop": repo})
-        parameters = map_parameters(
-            **{"client_id": self.auth_user, "client_secret": self.auth_pass, "path": file_path})
-        url = get_url(base_url, parameters)
-        return get_response_json(url)
-
-    def get_file_info(self, site: str, user: str, repo: str, file_path: str) -> Optional[Union[list[dict],dict]]:
-        base_url = "https://api.{site}/repos/{user}/{repo}/contents/{file}". \
-            format(site=site, user=user, repo=repo, file=file_path)
-        parameters = map_parameters(**{"client_id": self.auth_user, "client_secret": self.auth_pass})
-        url = get_url(base_url, parameters)
-        return get_response_json(url)
-
-    def get_file(self, site, user, repo, file_path) -> bytes:
-        file_info = None
-        try:
-            file_info = self.get_file_info(site, user, repo, file_path)
-        except Exception as e:
-            print("Error found at get file from url {}".format(e))
-        if not file_info:
-            return None
-        download_url = file_info.get('download_url')
-        return get_response_content(download_url)
-
-    def get_repository_list_by(self, site: str, user: str, prop: str):
-        repo_list = self.get_repository_list(site, user)
-        if not repo_list:
-            return None
-        return [x.get(prop) for x in repo_list]
+def github_get_file_info(client_id: str, client_secret: str, site: str, user: str, repo: str, file_path: str) -> \
+        Optional[Union[List[Dict], Dict]]:
+    base_url = "https://api.{site}/repos/{user}/{repo}/contents/{file}". \
+        format(site=site, user=user, repo=repo, file=file_path)
+    parameters = map_parameters(**{"client_id": client_id, "client_secret": client_secret})
+    url = get_url(base_url, parameters)
+    return get_response_json(url)
 
 
-class CourseBuilder:
-    def __init__(self, student_builder):
-        self.student_builder = student_builder
-
-    def build_course_from_csv(self, csv_path: str, git_column: str, base_column_names: list,
-                              new_column_names: list):
-        students_df = pd.read_csv(csv_path)
-        dfr = self.process_df(students_df, git_column)
-        dfr.columns = ['repo_site', 'repo_user', 'repo_name']
-        base_df = students_df.loc[:, base_column_names]
-        base_df.rename(columns=dict(zip(base_column_names, new_column_names)), inplace=True)
-        new_df = pd.concat([base_df, dfr], axis=1)
-        return new_df
-
-    def process_df(self, students_df: pd.DataFrame, git_column: str):
-        return students_df.apply(
-            lambda row: self.student_builder.get_repo_info(row.get(git_column), LBD),
-            axis='columns', result_type='expand')
-    # @staticmethod
-    # def build_course_from_csv(csv_path: str, practice_dict: dict):
-    #     students_df = pd.read_csv(csv_path)
-    #     dfr = review_practice(students_df, practice_dict)
+def github_get_file(client_id: str, client_secret: str, site, user, repo, file_path) -> Optional[bytes]:
+    file_info = None
+    try:
+        file_info = github_get_file_info(client_id, client_secret, site, user, repo, file_path)
+    except Exception as e:
+        print("Error found at get file from url {}".format(e))
+    if not file_info:
+        return None
+    download_url = file_info.get('download_url')
+    return get_response_content(download_url)
 
 
-class StudentBuilder:
-    def __init__(self, auth_user: str, auth_pass: str):
-        self.querier = RepositoryQuerier(auth_user, auth_pass)
+def github_get_repository_list_by(client_id: str, client_secret: str, site: str, user: str, prop: str) \
+        -> Optional[List[str]]:
+    repo_list = github_get_repository_list(client_id, client_secret, site, user)
+    if not repo_list:
+        return None
+    return [x.get(prop) for x in repo_list]
 
-    def build_student(self, matricula: str, class_name: str, url: str):
-        site, user, repo, = self.get_repo_info(url, class_name)
-        class_mate = ClassMate(matricula, class_name, site, user, repo) if site and user else None
-        return class_mate
 
-    def get_repo_info(self, url: str, class_name: str):
-        site = user = repo = None
-        try:
-            base_url = _remove_protocol_from_url(url)
-            url_pieces = base_url.split('/')
-            pieces = len(url_pieces)
-            if pieces > 1 and url_pieces[0] and url_pieces[1]:
-                site = _format_site(url_pieces[0])
-                user = url_pieces[1]
-                if pieces > 2 and url_pieces[2]:
-                    repo = _format_repo(url_pieces[2])
-        except Exception as e:
-            print("No valid repo for {}, {}".format(url, e))
-        return self._validate_repository(site, user, repo, class_name)
+def get_fn_with_credentials(client_id: str, client_secret: str, function: Callable) -> Callable:
+    return partial(function, client_id, client_secret)
 
-    def _validate_repository(self, site, user, repo, class_name):
-        validated_site = validated_user = validated_repo = repo_list = None
-        if site and user:
-            repo_list = self.querier.get_repository_list_by(site, user, 'name')
-        if repo_list:
-            validated_site = site
-            validated_user = user
-            validated_repo = repo if repo in repo_list else \
-                search_valid_repository(class_name, repo_list)
-        return validated_site, validated_user, validated_repo
+
+def get_querier(client_id: str, client_secret: str) -> Callable:
+    return partial(get_fn_with_credentials, client_id, client_secret)
+
+
+def build_course_from_csv(
+        get_repo_list_by: Callable[[str, str, str], List[Dict]],
+        csv_path: str, git_column: str,
+        base_column_names: List, new_column_names: List):
+    students_df = pd.read_csv(csv_path)
+    dfr = process_df(get_repo_list_by, students_df, git_column)
+    dfr.columns = ['repo_site', 'repo_user', 'repo_name']
+    base_df = students_df.loc[:, base_column_names]
+    base_df.rename(columns=dict(zip(base_column_names, new_column_names)), inplace=True)
+    new_df = pd.concat([base_df, dfr], axis=1)
+    return new_df
+
+
+def process_df(get_repo_list_by: Callable[[str, str, str], List[Dict]], students_df: pd.DataFrame, git_column: str):
+    return students_df.apply(
+        lambda row: get_repo_info(get_repo_list_by, row.get(git_column), LBD),
+        axis='columns', result_type='expand')
+
+
+def build_student(get_repolist_map_by: Callable[[str, str, str], List[Dict]], matricula: str, class_name: str,
+                  url: str) -> Student:
+    site, user, repo, = get_repo_info(get_repolist_map_by, url, class_name)
+    return Student(matricula, class_name, site, user, repo) if site and user else None
+
+
+def get_repo_info(get_repolist_map_by: Callable[[str, str, str], List[Dict]], url: str, class_name: str) \
+        -> Tuple[str, str, str]:
+    site = user = repo = None
+    try:
+        base_url = _remove_protocol_from_url(url)
+        url_pieces = base_url.split('/')
+        pieces = len(url_pieces)
+        if pieces > 1 and url_pieces[0] and url_pieces[1]:
+            site = _format_site(url_pieces[0])
+            user = url_pieces[1]
+            if pieces > 2 and url_pieces[2]:
+                repo = _format_repo(url_pieces[2])
+    except Exception as e:
+        print("No valid repo for {}, {}".format(url, e))
+    return validate_repository(get_repolist_map_by, site, user, repo, class_name)
+
+
+def validate_repository(get_repolist_map_by: Callable[[str, str, str], List[Dict]], site, user, repo, class_name) \
+        -> Tuple[str, str, str]:
+    validated_site = validated_user = validated_repo = repo_list = None
+    if site and user:
+        repo_list = get_repolist_map_by(site, user, 'name')
+    if repo_list:
+        validated_site = site
+        validated_user = user
+        validated_repo = repo if repo in repo_list else \
+            search_valid_repository(class_name, repo_list)
+    return validated_site, validated_user, validated_repo
 
 
 def search_valid_repository(class_name, repo_list):
@@ -205,7 +173,7 @@ def get_response_content(download_url) -> bytes:
     return content
 
 
-def get_response_json(url) -> dict:
+def get_response_json(url) -> Optional[Union[Dict, List[Dict]]]:
     response = requests.get(url)
     json = None
     if response.status_code >= 200 <= 250:
@@ -226,8 +194,6 @@ def map_parameters(**params):
 
 def get_base_url(url_template: str, **kwargs):
     return url_template.format(**kwargs)
-
-
 
 # def review_student_practice(repo_site: str, repo_user: str, repo_name: str, practice_obj: dict):
 #     p_due_date = datetime.datetime.strptime(practice_obj.get('due_date'), "%Y-%m-%d %H:%M")
