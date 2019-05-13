@@ -149,9 +149,14 @@ def score_practice_2_lbd(practice_name: str, delivery_date: datetime, file: byte
     limit_date = datetime(2019, 3, 9, 23, 59)
     if start_date <= delivery_date <= limit_date:
         score = score + 3
-    if len(file) > 10:
-        score = score + 7
-    return score
+    if file:
+        reg_ex = r"(create\s+table)"
+        match_obj = re.match(reg_ex, file, re.M | re.I)
+        points = 0
+        if match_obj:
+            created_tables = len(match_obj.groups())
+            score = score + (7 * min(created_tables/5, 1))
+    return score + points
 
 
 def score_practice_3_lbd(practice_name: str, delivery_date: datetime, file: bytes) -> int:
@@ -160,7 +165,7 @@ def score_practice_3_lbd(practice_name: str, delivery_date: datetime, file: byte
     limit_date = datetime(2019, 3, 16, 23, 59)
     if start_date <= delivery_date <= limit_date:
         score = score + 3
-    if len(file) > 10:
+    if file and len(file) > 10:
         score = score + 7
     return score
 
@@ -171,7 +176,7 @@ def score_practice_4_lbd(practice_name: str, delivery_date: datetime, file: byte
     limit_date = datetime(2019, 3, 25, 23, 59)
     if start_date <= delivery_date <= limit_date:
         score = score + 3
-    if len(file) > 10:
+    if file and len(file) > 10:
         score = score + 7
     return score
 
@@ -182,7 +187,7 @@ def score_practice_5_lbd(practice_name: str, delivery_date: datetime, file: byte
     limit_date = datetime(2019, 4, 2, 23, 59)
     if start_date <= delivery_date <= limit_date:
         score = score + 3
-    if len(file) > 10:
+    if file and len(file) > 10:
         score = score + 7
     return score
 
