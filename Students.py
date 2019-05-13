@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from functools import partial
+from functools import partial, lru_cache
 from typing import Optional, Union, Tuple, List, Dict, Callable
 
 import pandas as pd
@@ -25,6 +25,7 @@ possible_repositories = dict(LDOO=["LDOO_EJ_19", "LDOO", "LDOO_EJ_2019", "LDOO_E
                              LBD=['LBD', 'BD', 'BaseDeDatos'])
 
 
+@lru_cache(maxsize=None)
 def github_get_repository_list(client_id: str, client_secret: str, site: str, user: str) -> Dict:
     base_url = get_base_url("https://api.{site}/users/{user}/repos",
                             **{"site": site, "user": user})
@@ -33,15 +34,17 @@ def github_get_repository_list(client_id: str, client_secret: str, site: str, us
     return get_response_json(url)
 
 
+@lru_cache(maxsize=None)
 def github_get_commit_list_of_a_file(client_id: str, client_secret: str, site, user, repo, file_path) -> List[Dict]:
     base_url = get_base_url("https://api.{site}/repos/{user}/{repo}/commits",
-                            **{"site": site, "user": user, "reop": repo})
+                            **{"site": site, "user": user, "repo": repo})
     parameters = map_parameters(
         **{"client_id": client_id, "client_secret": client_secret, "path": file_path})
     url = get_url(base_url, parameters)
     return get_response_json(url)
 
 
+@lru_cache(maxsize=None)
 def github_get_file_info(client_id: str, client_secret: str, site: str, user: str, repo: str, file_path: str) -> \
         Optional[Union[List[Dict], Dict]]:
     base_url = "https://api.{site}/repos/{user}/{repo}/contents/{file}". \
@@ -51,7 +54,7 @@ def github_get_file_info(client_id: str, client_secret: str, site: str, user: st
     return get_response_json(url)
 
 
-def github_get_file(client_id: str, client_secret: str, site, user, repo, file_path) -> Optional[bytes]:
+def github_get_file(client_id: str, client_secret: str, site: str, user: str, repo: str, file_path: str) -> Optional[bytes]:
     file_info = None
     try:
         file_info = github_get_file_info(client_id, client_secret, site, user, repo, file_path)
@@ -59,7 +62,7 @@ def github_get_file(client_id: str, client_secret: str, site, user, repo, file_p
         print("Error found at get file from url {}".format(e))
     if not file_info:
         return None
-    download_url = file_info.get('download_url')
+    download_url = file_info['download_url']
     return get_response_content(download_url)
 
 
@@ -165,6 +168,7 @@ def _remove_protocol_from_url(url: str):
     return return_url
 
 
+@lru_cache(maxsize=None)
 def get_response_content(download_url) -> bytes:
     content = None
     response = requests.get(download_url)
@@ -173,6 +177,7 @@ def get_response_content(download_url) -> bytes:
     return content
 
 
+@lru_cache(maxsize=None)
 def get_response_json(url) -> Optional[Union[Dict, List[Dict]]]:
     response = requests.get(url)
     json = None

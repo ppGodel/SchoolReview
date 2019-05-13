@@ -30,14 +30,25 @@ class TestAlumno(TestCase):
         a = build_student(querier(github_get_repository_list_by), "1186622", LDOO, "github.com/ppgodel/lol")
         self.assertEqual("LDOO_EJ_19", a.git_repo)
 
-    def test_from_file(self):
+    def test_from_file_ldoo(self):
         querier = get_querier_with_credentials()
         # columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido", "Grupo"]
         base_columns = ["Matricula", "Nombre(s)", "Primer Apellido", "Segundo Apellido", "Grupo"]
         new_columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido", "Grupo"]
         a = build_course_from_csv(querier(github_get_repository_list_by),
-                                  "test/resources/students.csv", ' direccion de tu repositorio GIT',
+                                  "test/resources/students_ldoo.csv", ' direccion de tu repositorio GIT',
                                   base_columns, new_columns)
         a.to_csv('test/resources/LDOO_repos.csv', sep=',', encoding='utf-8', index=False)
         self.assertIsNotNone(a)
         # import pandas
+
+
+    def test_from_file_lbd(self):
+        querier = get_querier_with_credentials()
+        base_columns = ["Matricula", "Nombres", "Apellido Paterno", "Apellido Materno", "Laboratorio a cursar"]
+        new_columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido", "Grupo"]
+        a = build_course_from_csv(querier(github_get_repository_list_by),
+                                  "test/resources/practicas_lbd.csv", 'Repositorio',
+                                  base_columns, new_columns)
+        a.to_csv('test/resources/LBD_repos.csv', sep=',', encoding='utf-8', index=False)
+        self.assertIsNotNone(a)
