@@ -137,7 +137,11 @@ def search_file_in_repo_dir(fn_get_file_info_from_path: Callable[[str], Dict], p
     files_info = fn_get_file_info_from_path(repo_path)
     file_info_match = None
     for file_info in files_info:
-        match_obj = re.match(practice_alias, file_info["name"].strip(), re.M | re.I)
+        try:
+            file_name = file_info["name"].strip()
+        except TypeError:
+            continue
+        match_obj = re.search(practice_alias, file_name, re.M | re.I)
         if match_obj:
             if file_info["type"] == "dir":
                 file_info_match = search_file_in_repo_dir(fn_get_file_info_from_path,
@@ -168,6 +172,9 @@ def score_practice_1_lbd(practice_name: str, delivery_date: datetime, file: byte
     score = 0
     start_date = datetime(2019, 2, 9, 00, 00)
     limit_date = datetime(2019, 3, 2, 23, 59)
+    end_date = datetime(2019, 4, 28, 12, 0)
+    if delivery_date > end_date:
+        return 0
     if start_date <= delivery_date <= limit_date:
         score = score + 3
     if file and len(file) > 10:
@@ -179,18 +186,20 @@ def score_practice_2_lbd(practice_name: str, delivery_date: datetime, file: byte
     score = 0
     start_date = datetime(2019, 2, 16, 00, 00)
     limit_date = datetime(2019, 3, 9, 23, 59)
-    end_date = datetime(2019, 4, 28, 0, 0)
+    end_date = datetime(2019, 4, 28, 12, 0)
     if delivery_date > end_date:
         return 0
     if start_date <= delivery_date <= limit_date:
         score = score + 3
-    if file:
-        reg_ex = b"(create\s+table\s+(\[?\w+\]?\.?)+)"
-        match_obj = re.findall(reg_ex, file, re.M | re.I)
-        points = 0
-        if match_obj:
-            created_tables = len(match_obj)
-            score = score + (7 * min(created_tables / 5, 1))
+    if file and len(file) > 10:
+        score = score + 7
+    # if file:
+    #     reg_ex = b"(create(\s|\t|\n)+table(\s|\t|\n)+(\[?\w+\]?\.?)+)"
+    #     match_obj = re.findall(reg_ex, file, re.M | re.I)
+    #     points = 0
+    #     if match_obj:
+    #         created_tables = len(match_obj)
+    #         score = score + (7 * min(created_tables / 5, 1))
     return score
 
 
@@ -198,7 +207,7 @@ def score_practice_3_lbd(practice_name: str, delivery_date: datetime, file: byte
     score = 0
     start_date = datetime(2019, 2, 23, 00, 00)
     limit_date = datetime(2019, 3, 16, 23, 59)
-    end_date = datetime(2019, 4, 28, 0, 0)
+    end_date = datetime(2019, 4, 28, 12, 0)
     if delivery_date > end_date:
         return 0
     if start_date <= delivery_date <= limit_date:
@@ -226,31 +235,33 @@ def score_practice_5_lbd(practice_name: str, delivery_date: datetime, file: byte
     score = 0
     start_date = datetime(2019, 3, 9, 00, 00)
     limit_date = datetime(2019, 3, 30, 23, 59)
-    end_date = datetime(2019, 4, 28, 0, 0)
+    end_date = datetime(2019, 4, 28, 12, 0)
     if delivery_date > end_date:
         return 0
     if start_date <= delivery_date <= limit_date:
         score = score + 3
-    if file:
-        reg_ex = b"(insert\s+\w+)"
-        match_obj = re.findall(reg_ex, file, re.M | re.I)
-        points = 0
-        if match_obj:
-            inserts = len(match_obj)
-            score = score + (5 * min(inserts / 100, 1))
-        reg_ex = b"(update\s+\w+)"
-        match_obj = re.findall(reg_ex, file, re.M | re.I)
-        points = 0
-        if match_obj:
-            updates = len(match_obj)
-            score = score + (1 * min(updates / 5, 1))
-
-        reg_ex = b"(delete\s+\w+)"
-        match_obj = re.findall(reg_ex, file, re.M | re.I)
-        points = 0
-        if match_obj:
-            deletes = len(match_obj)
-            score = score + (1 * min(deletes / 5, 1))
+    if file and len(file) > 10:
+        score = score + 7
+    # if file:
+    #     reg_ex = b"(insert(\s|\t|\n)+\w+)"
+    #     match_obj = re.findall(reg_ex, file, re.M | re.I)
+    #     points = 0
+    #     if match_obj:
+    #         inserts = len(match_obj)
+    #         score = score + (5 * min(inserts / 100, 1))
+    #     reg_ex = b"(update(\s|\t|\n)+\w+)"
+    #     match_obj = re.findall(reg_ex, file, re.M | re.I)
+    #     points = 0
+    #     if match_obj:
+    #         updates = len(match_obj)
+    #         score = score + (1 * min(updates / 5, 1))
+    #
+    #     reg_ex = b"(delete(\s|\t|\n)+\w+)"
+    #     match_obj = re.findall(reg_ex, file, re.M | re.I)
+    #     points = 0
+    #     if match_obj:
+    #         deletes = len(match_obj)
+    #         score = score + (1 * min(deletes / 5, 1))
     return score
 
 
@@ -258,18 +269,20 @@ def score_practice_6_lbd(practice_name: str, delivery_date: datetime, file: byte
     score = 0
     start_date = datetime(2019, 3, 16, 00, 00)
     limit_date = datetime(2019, 4, 6, 23, 59)
-    end_date = datetime(2019, 4, 28, 0, 0)
+    end_date = datetime(2019, 4, 28, 12, 0)
     if delivery_date > end_date:
         return 0
     if start_date <= delivery_date <= limit_date:
         score = score + 3
-    if file:
-        reg_ex = b"(select\s+\w+)"
-        match_obj = re.findall(reg_ex, file, re.M | re.I)
-        points = 0
-        if match_obj:
-            inserts = len(match_obj)
-            score = score + (7 * min(inserts / 15, 1))
+    if file and len(file) > 10:
+        score = score + 7
+    # if file:
+    #     reg_ex = b"(select(\s|\t|\n)+\w+)"
+    #     match_obj = re.findall(reg_ex, file, re.M | re.I)
+    #     points = 0
+    #     if match_obj:
+    #         inserts = len(match_obj)
+    #         score = score + (7 * min(inserts / 15, 1))
     return score
 
 
@@ -277,18 +290,20 @@ def score_practice_7_lbd(practice_name: str, delivery_date: datetime, file: byte
     score = 0
     start_date = datetime(2019, 3, 23, 00, 00)
     limit_date = datetime(2019, 4, 13, 23, 59)
-    end_date = datetime(2019, 4, 28, 0, 0)
+    end_date = datetime(2019, 4, 28, 12, 0)
     if delivery_date > end_date:
         return 0
     if start_date <= delivery_date <= limit_date:
         score = score + 3
-    if file:
-        reg_ex = b"(create\s+view\s+(\[?\w+\]?\.?)+)"
-        match_obj = re.findall(reg_ex, file, re.M | re.I)
-        points = 0
-        if match_obj:
-            inserts = len(match_obj)
-            score = score + (7 * min(inserts / 5, 1))
+    if file and len(file) > 10:
+        score = score + 7
+    # if file:
+    #     reg_ex = b"(create(\s|\t|\n)+view(\s|\t|\n)+(\[?\w+\]?\.?)+)"
+    #     match_obj = re.findall(reg_ex, file, re.M | re.I)
+    #     points = 0
+    #     if match_obj:
+    #         inserts = len(match_obj)
+    #         score = score + (7 * min(inserts / 5, 1))
     return score
 
 
@@ -301,34 +316,35 @@ def score_practice_8_lbd(practice_name: str, delivery_date: datetime, file: byte
         return 0
     if start_date <= delivery_date <= limit_date:
         score = score + 3
-    if file:
-        reg_ex = b"(create\s+trigger\s+(\[?\w+\]?\.?)+)"
-        match_obj = re.findall(reg_ex, file, re.M | re.I)
-        points = 0
-        if match_obj:
-            inserts = len(match_obj)
-            score = score + (2 * min(inserts / 1, 1))
-        reg_ex = b"(create\s+(stored\s+)?procedure\s+(\[?\w+\]?\.?)+)"
-        match_obj = re.findall(reg_ex, file, re.M | re.I)
-        points = 0
-        if match_obj:
-            inserts = len(match_obj)
-            score = score + (3 * min(inserts / 5, 1))
-        reg_ex = b"(create\s+function\s+(\[?\w+\]?\.?)+)"
-        match_obj = re.findall(reg_ex, file, re.M | re.I)
-        points = 0
-        if match_obj:
-            inserts = len(match_obj)
-            score = score + (2 * min(inserts / 1, 1))
+    if file and len(file) > 10:
+        score = score + 7
+    # if file:
+    #     reg_ex = b"(create(\s|\t|\n)+trigger(\s|\t|\n)+(\[?\w+\]?\.?)+)"
+    #     match_obj = re.findall(reg_ex, file, re.M | re.I)
+    #     points = 0
+    #     if match_obj:
+    #         inserts = len(match_obj)
+    #         score = score + (2 * min(inserts / 1, 1))
+    #     reg_ex = b"(create(\s|\t|\n)+(stored(\s|\t|\n)+)?procedure(\s|\t|\n)+(\[?\w+\]?\.?)+)"
+    #     match_obj = re.findall(reg_ex, file, re.M | re.I)
+    #     points = 0
+    #     if match_obj:
+    #         inserts = len(match_obj)
+    #         score = score + (3 * min(inserts / 5, 1))
+    #     reg_ex = b"(create(\s|\t|\n)+function(\s|\t|\n)+(\[?\w+\]?\.?)+)"
+    #     match_obj = re.findall(reg_ex, file, re.M | re.I)
+    #     points = 0
+    #     if match_obj:
+    #         inserts = len(match_obj)
+    #         score = score + (2 * min(inserts / 1, 1))
     return score
-
 
 
 def score_pia_lbd(practice_name: str, delivery_date: datetime, file: bytes) -> int:
     score = 0
     start_date = datetime(2019, 3, 30, 00, 00)
     limit_date = datetime(2019, 4, 20, 23, 59)
-    end_date = datetime(2019, 4, 28, 0, 0)
+    end_date = datetime(2019, 4, 28, 12, 0)
     if delivery_date > end_date:
         return 0
     if start_date <= delivery_date <= limit_date:
@@ -338,21 +354,43 @@ def score_pia_lbd(practice_name: str, delivery_date: datetime, file: bytes) -> i
     return score * 2
 
 
-lbd_p1 = Practice("Practica1", [r"P(r(a|á)ctica)?(\s*|_*)(0?1|uno)",
-                                r"T(area)?(\s*|_*)(0?1|uno)"], False, score_practice_1_lbd)
-lbd_p2 = Practice("Practica2", [r"P(r(a|á)ctica)?(\s*|_*)(0?2|dos)",
-                                r"T(area)?(\s*|_*)(0?2|dos)"], False, score_practice_2_lbd)
-lbd_p3 = Practice("Practica3", [r"P(r(a|á)ctica)?(\s*|_*)(0?3|tres)",
-                                r"T(area)?(\s*|_*)(0?3|tres)"], False, score_practice_3_lbd)
-lbd_p4 = Practice("Practica4", [r"P(r(a|á)ctica)?(\s*|_*)(0?4|cuatro)",
-                                r"T(area)?(\s*|_*)(0?4|cuatro)"], False, score_practice_4_lbd)
-lbd_p5 = Practice("Practica5", [r"P(r(a|á)ctica)?(\s*|_*)(0?5|cinco)",
-                                r"T(area)?(\s*|_*)(0?5|cinco)"], False, score_practice_5_lbd)
-lbd_p6 = Practice("Practica6", [r"P(r(a|á)ctica)?(\s*|_*)(0?6|seis)",
-                                r"T(area)?(\s*|_*)(0?6|seis)"], False, score_practice_6_lbd)
-lbd_p7 = Practice("Practica7", [r"P(r(a|á)ctica)?(\s*|_*)(0?7|siete)",
-                                r"T(area)?(\s*|_*)(0?7|siete)"], False, score_practice_7_lbd)
-lbd_p8 = Practice("Practica8", [r"P(r(a|á)ctica)?(\s*|_*)(0?8|ocho)",
-                                r"T(area)?(\s*|_*)(0?8|ocho)"], False, score_practice_8_lbd)
-lbd_pia = Practice("PIA", [r"P(r(a|á)ctica)?(\s*|_*)(0?8|ocho)",
-                                r"T(area)?(\s*|_*)(0?8|ocho)"], False, score_pia_lbd)
+word_separator_re = r"(\s|_|#)*"
+practica_re = r"P(r(a|á)ctica)?"
+tarea_re = r"(T(area)?|sqlquery)"
+uno_re = r"(0?1|uno)"
+dos_re = r"(0?2|dos)"
+tres_re = r"(0?3|tres)"
+cuatro_re = r"(0?4|cuatro)"
+cinco_re = r"(0?5|cinco)"
+seis_re = r"(0?6|seis)"
+siete_re = r"(0?7|siete)"
+ocho_re = r"(0?8|ocho)"
+nueve_re = r"(0?9|nueve)"
+pia_re = r"(pia|final|{}{}{})".format(practica_re, word_separator_re, nueve_re)
+
+lbd_p1 = Practice("Practica1", [r"{}{}{}".format(practica_re, word_separator_re, uno_re),
+                                r"{}{}{}".format(tarea_re, word_separator_re, uno_re)],
+                  False, score_practice_1_lbd)
+lbd_p2 = Practice("Practica2", [r"{}{}{}".format(practica_re, word_separator_re, dos_re),
+                                r"{}{}{}".format(tarea_re, word_separator_re, dos_re)],
+                  False, score_practice_2_lbd)
+lbd_p3 = Practice("Practica3", [r"{}{}{}".format(practica_re, word_separator_re, tres_re),
+                                r"{}{}{}".format(tarea_re, word_separator_re, tres_re)],
+                  False, score_practice_3_lbd)
+lbd_p4 = Practice("Practica4", [r"{}{}{}".format(practica_re, word_separator_re, cuatro_re),
+                                r"{}{}{}".format(tarea_re, word_separator_re, cuatro_re)],
+                  False, score_practice_4_lbd)
+lbd_p5 = Practice("Practica5", [r"{}{}{}".format(practica_re, word_separator_re, cinco_re),
+                                r"{}{}{}".format(tarea_re, word_separator_re, cinco_re)],
+                  False, score_practice_5_lbd)
+lbd_p6 = Practice("Practica6", [r"{}{}{}".format(practica_re, word_separator_re, seis_re),
+                                r"{}{}{}".format(tarea_re, word_separator_re, seis_re)],
+                  False, score_practice_6_lbd)
+lbd_p7 = Practice("Practica7", [r"{}{}{}".format(practica_re, word_separator_re, siete_re),
+                                r"{}{}{}".format(tarea_re, word_separator_re, siete_re)],
+                  False, score_practice_7_lbd)
+lbd_p8 = Practice("Practica8", [r"{}{}{}".format(practica_re, word_separator_re, ocho_re),
+                                r"{}{}{}".format(tarea_re, word_separator_re, ocho_re)],
+                  False, score_practice_8_lbd)
+lbd_pia = Practice("PIA", [r"{}{}{}".format(practica_re, word_separator_re, pia_re)],
+                   False, score_pia_lbd)
