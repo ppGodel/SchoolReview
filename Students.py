@@ -5,6 +5,7 @@ from typing import Optional, Union, Tuple, List, Dict, Callable
 
 import pandas as pd
 import requests
+import urllib.parse
 
 
 @dataclass
@@ -193,7 +194,7 @@ def get_url(base_url: str, params: str):
 def map_parameters(**params):
     parameters = None
     if params:
-        parameters = "&".join([f"{k}={v}" for (k, v) in params.items()])
+        parameters = "&".join([f"{urllib.parse.quote(k)}={urllib.parse.quote(v)}" for (k, v) in params.items()])
     return parameters
 
 
