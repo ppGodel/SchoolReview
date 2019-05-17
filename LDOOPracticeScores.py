@@ -10,11 +10,11 @@ def exceds_end_date(delivery_date: datetime):
     return True if delivery_date > end_date else False
 
 
-def score_practice_1_lbd(practice_name: str, delivery_date: datetime, file: bytes) -> int:
+def score_practice_1_ldoo(practice_name: str, delivery_date: datetime, file: bytes) -> int:
     score = 0
     if exceds_end_date(delivery_date):
         return 0
-    start_date = datetime(2019, 2, 9, 00, 00)
+    start_date = datetime(2019, 2, 2, 00, 00)
     limit_date = datetime(2019, 3, 2, 23, 59)
     if start_date <= delivery_date <= limit_date:
         score = score + 3
@@ -23,5 +23,5 @@ def score_practice_1_lbd(practice_name: str, delivery_date: datetime, file: byte
     return score
 
 
-lbd_p1 = Practice("Practica1", [p1_re],
-                  True, score_practice_1_lbd)
+ldoo_p1 = Practice("Practica1", [p1_re],
+                  True, score_practice_1_ldoo)

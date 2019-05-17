@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable, Dict, List, Tuple, Optional, Union
 
-from LBDReviews import create_repo_calif, practice_summary
 from Students import get_response_content, get_querier, github_get_file_info, \
     github_get_commit_list_of_a_file
 import cchardet
@@ -195,13 +194,14 @@ def get_querier_with_credentials(config_path: str):
     return get_querier(my_data["client_id"], my_data["client_secret"])
 
 
-def review_class_by_practice(config_path:str, practice_info: Practice, csv_path:str):
-    print("Reviewing: {} at {}".format(practice_info.name, datetime.datetime.now()))
+def review_class_by_practice(config_path:str, practice_info: Practice, csv_path: str,
+                             create_repo_calif_df: Callable[[Callable, str], DataFrame]):
+    print("Reviewing: {} at {}".format(practice_info.name, datetime.now()))
     querier = get_querier_with_credentials(config_path)
     try:
         df_lbd = parse_csv_df(csv_path)
     except FileNotFoundError:
-        df_lbd = create_repo_calif(querier, csv_path)
+        df_lbd = create_repo_calif_df(querier, csv_path)
     practice_calif = review_practice_from_df(df_lbd, querier(github_get_file_info),
                                              querier(github_get_commit_list_of_a_file),
                                              practice_info)

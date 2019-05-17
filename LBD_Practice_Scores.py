@@ -176,7 +176,8 @@ def exceds_end_date(delivery_date: datetime):
 
 def score_pia_lbd(practice_name: str, delivery_date: datetime, file: bytes) -> int:
     score = 0
-    if exceds_end_date(delivery_date):
+    end_date = datetime(2019, 5, 6, 00, 00)
+    if delivery_date < end_date:
         return 0
     start_date = datetime(2019, 3, 30, 00, 00)
     limit_date = datetime(2019, 4, 20, 23, 59)

@@ -4,7 +4,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1884131,Luis Edgar,Jiménez,Jiménez,Sabado 10 a 12 am,github.com,pret1chk,LabBd,7,7,7,7,7,7,7,0,14,63
 1669625,Carlos Andrés,Hernández,Yañez,Sabado 10 a 12 am,github.com,AndresHdz101,LBD,0,0,0,0,0,0,0,0,0,0
 1937862,Juan Daniel,Reyna,Garza,Sabado 10 a 12 am,github.com,Ju4nDani3l,LBD,10,10,10,10,10,10,10,0,10,80
-1732494,Jean Carlo,Valdez,Garza,Sabado 10 a 12 am,github.com,JeanCarloValdezGarza26,LBD,10,10,10,10,10,10,10,0,10,80
+1732494,Jean Carlo,Valdez,Garza,Sabado 10 a 12 am,github.com,JeanCarloValdezGarza26,LBD,10,10,10,10,10,10,10,10,20,100
 1803242,Jordan,Gallardo,Vitela,Sabado 10 a 12 am,github.com,Jordan099,LBD,10,10,10,10,10,10,10,0,10,80
 1728371,Juan Carlos,Buentello,Cruz,Sabado 10 a 12 am,github.com,juanbuentello,LBD,10,0,10,0,0,0,0,0,0,20
 1752659,José Alonso,Barrientos,Mendoza,Sabado 10 a 12 am,,,,0,0,0,0,0,0,0,0,0,0
@@ -23,7 +23,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1887869,Juan José,Alonso,Villarreal,Sabado 8 a 10 am,github.com,JuanVillarreal99,LBD,10,7,7,7,7,7,7,7,14,73
 1806765,Iván Del Ángel García Pérez ,García ,Perez ,Sabado de 12 a 2 pm,github.com,ivaangrc,LBD,10,10,10,0,0,0,0,0,0,30
 1814107,Mauricio ,Gutierrez ,Herrera,Sabado de 12 a 2 pm,github.com,XxMauri505xX,Mauricio-,10,7,7,7,7,7,7,7,14,73
-1560020,Azaed Alejandro ,Ramirez,Flores,Sabado 10 a 12 am,github.com,azaedramirez,LB,10,10,10,7,0,0,0,0,0
+1560020,Azaed Alejandro ,Ramirez,Flores,Sabado 10 a 12 am,github.com,azaedramirez,LB,10,10,10,7,0,0,0,0,0,37
 1887873,José Ernesto,Briseño,Moya,Sabado de 12 a 2 pm,github.com,Killerernesto,LBD,7,7,10,7,7,10,7,10,14,79
 1742979,Luis Roberto,Gonzalez,Esquivel,Sabado 10 a 12 am,github.com,RobertoGonzalez99,LBD,10,10,10,10,10,10,10,10,14,94
 1676978,Amado de Jesús ,Rios,Vazquez,Sabado de 2 a 4 pm,github.com,amadosk8,LBD,10,8,7,0,7,7,7,10,14,70
@@ -32,7 +32,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1819796,Darian Milenia,Llamas,Rodríguez ,Sabado de 2 a 4 pm,github.com,DarianLl00,LBD,10,0,0,0,0,0,0,0,0,10
 1736179,Devani Lizbeth,Esparza,Ordaz,Sabado de 2 a 4 pm,github.com,devani3sparza,LBD,10,7,7,7,7,7,7,7,14,73
 1837462,Moises,Rodriguez ,Aguilar ,Sabado de 2 a 4 pm,github.com,MoyRodriguez,,0,0,0,0,0,0,0,0,0,0
-1669068,Abel Isaias,Espinoza,Mireles,Sabado de 2 a 4 pm,github.com,AbelEspinoza14,BDD,10,10,0,10,10,10,10,10,14,94
+1669068,Abel Isaias,Espinoza,Mireles,Sabado de 2 a 4 pm,github.com,AbelEspinoza14,BDD,10,10,0,10,10,10,10,10,14,84
 1625958,Brandon Alonso,Davila,Sanchez,Sabado de 2 a 4 pm,github.com,Mr-Wololo,1625958,7,7,10,10,10,10,10,7,14,85
 1657393,Victor Hugo,Martinez,Garcia,Sabado de 2 a 4 pm,github.com,victormtzzaiko,LBDD,10,10,7,7,7,7,7,10,20,85
 1686512,Zeus II ,Vera,Rodriguez,Sabado de 2 a 4 pm,github.com,ZeusVRdz,LBD_2019,10,10,0,10,0,0,0,0,0,30
@@ -41,7 +41,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1636450,Alan Francisco,Contreras,Garza,Sabado de 2 a 4 pm,github.com,ProtoAlan,DatabaseLab,10,10,0,10,7,7,7,7,14,72
 1682364,Luis Guillermo,Hernández,Araujo,Sabado de 2 a 4 pm,github.com,guillermo-fcfm,Lab-BD,10,10,10,7,7,7,7,10,20,88
 1809024,Luis Adrián,De la Rosa,Hernández,Sabado 10 a 12 am,github.com,luisxd383,LBD,10,10,10,10,10,10,7,10,14,91
-1741842,johan yair,perez,aldana,Sabado de 2 a 4 pm,github.com,B4KI,LBD,10,10,10,10,10,10,10,10,20,100
+1741842,johan yair,perez,aldana,Sabado de 2 a 4 pm,github.com,B4KI,LBD,10,10,10,10,10,10,10,10,10,100
 1679652,Juan José,Ornelas,Herrera,Sabado 10 a 12 am,github.com,JuanOrnelas,LBD,10,10,7,10,10,10,10,0,10,77
 1937845,Denisse,Coronado,Ulloa,Sabado de 12 a 2 pm,github.com,DeniceLSTI,LBD,10,10,7,10,7,7,7,7,14,79
 1741780,Daniel Emmanuel,Ovalle,Hernández,Sabado 8 a 10 am,github.com,Daaani33,LBD,7,7,10,7,7,7,7,10,0,62
