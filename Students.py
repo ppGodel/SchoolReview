@@ -49,7 +49,7 @@ def github_get_commit_list_of_a_file(client_id: str, client_secret: str, site, u
 def github_get_file_info(client_id: str, client_secret: str, site: str, user: str, repo: str, file_path: str) -> \
         Optional[Union[List[Dict], Dict]]:
     base_url = "https://api.{site}/repos/{user}/{repo}/contents/{file}". \
-        format(site=site, user=user, repo=repo, file=file_path)
+        format(site=site, user=user, repo=urllib.parse.quote(repo), file=urllib.parse.quote(file_path))
     parameters = map_parameters(**{"client_id": client_id, "client_secret": client_secret})
     url = get_url(base_url, parameters)
     return get_response_json(url)
@@ -72,7 +72,10 @@ def github_get_repository_list_by(client_id: str, client_secret: str, site: str,
     repo_list = github_get_repository_list(client_id, client_secret, site, user)
     if not repo_list:
         return None
-    return [x.get(prop) for x in repo_list]
+    try:
+        return [x.get(prop) for x in repo_list]
+    except AttributeError:
+        print("site: {}, git_user: {}, property: {}".format(site,user,prop))
 
 
 def get_fn_with_credentials(client_id: str, client_secret: str, function: Callable) -> Callable:
