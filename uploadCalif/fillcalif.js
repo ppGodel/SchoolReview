@@ -10,44 +10,85 @@ function partial(fn /*, args...*/) {
       return fn.apply(this, args.concat(slice.call(arguments, 0)));
     };
 }
+
+function readSingleFileAndApply(fn, e) {
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    fn(contents);
+  };
+  reader.readAsText(file);
+}
+
+
 function csvJSON(csv){
-    var separator = ","
+    var separator = ",";
     var lines=csv.split("\n");
     var result = [];
     var headers=lines[0].split(separator);
     for(var i=1;i<lines.length;i++){
-	var obj = {};
-	var currentline=lines[i].split(separator);
-	for(var j=0;j<headers.length;j++){
-	    obj[headers[j]] = currentline[j];
-	}
+	    var obj = {};
+	    var currentline=lines[i].split(separator);
+	    for(var j=0;j<headers.length;j++){
+	        obj[headers[j]] = currentline[j];
+	    }
 	result.push(obj);
   }
-  //return result; //JavaScript object
-  return JSON.stringify(result); //JSON
+  return result; //JavaScript object
+  //return JSON.stringify(result); //JSON
 }
-function fillrow(studentsDict, row){
-    var sid =  row.getElementsByTagName("td")[1].innerText
-    calif=0
-    if(sid in studentDict){
-	calif = studentsDict[sid]
+
+function JSONToDict(JSONList, key){
+    var dict = {};
+    console.log(typeof(JSONList));
+    for( var i = 0; i < JSONList.length; i++){
+        var jsonObj = JSONList[i];
+        dict[jsonObj[key]] = jsonObj;
     }
-    row.getElementsByTagName("td")[5].getElementsByTagName("input")[0].value = calif
+    return dict;
+}
+
+function fillrow(studentsDict, row){
+    var sid = row.getElementsByTagName("td")[1].innerText
+    var calif = 50;
+    if(sid in studentsDict){
+	    calif = studentsDict[sid]["Total"];
+	    if(calif < 55){
+	    calif = 55
+	    }
+	    if(calif > 65 && calif < 70){
+            calif = 65
+        }
+    }
+    row.getElementsByTagName("td")[5].getElementsByTagName("input")[0].value = calif;
 }
 function printRow(msg, row){
-    var sid =  row.getElementsByTagName("td")[1].innerText
-    console.log(msg + sid)
+    var sid =  row.getElementsByTagName("td")[1].innerText;
+    console.log(msg + sid);
 }
 function iterateTable(tbl, fnrow){
-    for(var i=1; i<tbl.rows.length;i++){
-    fnrow(tbl.rows[i])
+    for(var i = 1; i<tbl.rows.length;i++){
+        fnrow(tbl.rows[i]);
     }
 }
-function openJsonFile(path){
-   return var json = require(path); 
+
+function main(tableToFill, csvContent){
+    var sdict = JSONToDict(csvJSON(csvContent), 'Matricula');
+    console.log(sdict);
+    iterateTable(tableToFill, partial(fillrow, sdict));
 }
 
-var sdict = openJsonFile('')
-var tble = document.getElementsByTagName("frameset")[1].getElementsByTagName("frame")[1].contentDocument.getElementsByTagName("form")[0].getElementsByClassName("TablaLink")[0]
 
-iterateTable(tble, partial(fillrow, sdict))
+var baseFrame =  document.getElementsByTagName("frameset")[1].getElementsByTagName("frame")[1];
+var baseForm = baseFrame.contentDocument.getElementsByTagName("form")[0]
+var tble = baseForm.getElementsByClassName("TablaLink")[0];
+var input = document.createElement("input");
+input.type = "file";
+input.id = "file-input";
+baseForm.appendChild(input)
+
+baseFrame.contentDocument.getElementById('file-input').addEventListener('change', partial(readSingleFileAndApply, partial(main, tble)), false);
