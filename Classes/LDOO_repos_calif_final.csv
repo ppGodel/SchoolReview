@@ -2,14 +2,14 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1851232,Gerardo Uriel ,Ochoa ,López ,007 Martes 8 - 10,github.com,GerardoOchoa229,LDOO_1851232,10,10,10,10,10,10,10,0,0,0,70
 1860289,Gil Armando,Salas,Castillo,006 Martes 6 - 8,github.com,GilArmando,LDOO_SEM2-19,10,10,10,10,10,0,0,10,10,0,70
 1690497,Ariadne,López,Riojas,006 Martes 6 - 8,github.com,AriadneLR,LDOO_EJ_19,7,7,10,10,7,10,10,10,10,7,88
-1877429,Fernando Alberto,Aguirre,Rodríguez,006 Martes 6 - 8,github.com,Fernando-Alberto-1877429,LDOO_EJ_19,10,10,10,7,7,10,10,10,10,7,91
+1877429,Fernando Alberto,Aguirre,Rodríguez,006 Martes 6 - 8,github.com,Fernando-Alberto-1877429,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,10,100
 1813923,Francisco Alexis,Riego,Padilla,006 Martes 6 - 8,github.com,Alexis0711,LDOO_EJ_19,0,10,10,10,7,10,10,7,10,7,81
 1941516,Ricardo Emmanuel,Tovar,Domínguez,006 Martes 6 - 8,github.com,RicardoTovar,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,7,97
-974511,Sebastian,Castaneda,Marin,006 Martes 6 - 8,github.com,sebascm0880,LDOO_EJ_19,10,7,10,10,10,10,7,0,0,0,64
+974511,Sebastian,Castaneda,Marin,006 Martes 6 - 8,github.com,sebascm0880,LDOO_EJ_19,10,7,10,10,10,10,7,10,0,0,74
 1868332,Kevin Alejandro,Lugo ,Reyes,006 Martes 6 - 8,github.com,Kevhn,LDOO_EJ_19,10,10,10,7,7,10,10,10,10,7,91
 1814782,Isaias Fernando,Jerez,Lizardo,006 Martes 6 - 8,github.com,IsaiasJerez,LDOO_EJ_19,10,10,10,10,7,10,10,10,10,7,94
 1941482,Alan ,Cisneros,Monreal,006 Martes 6 - 8,github.com,AlanCisneros1007,LDOO_EJ_19,10,10,10,7,7,10,10,10,10,7,91
-1871178,Daniela Patricia,Sosa,Huerta,006 Martes 6 - 8,github.com,Daniela-Sosa,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,7,97
+1871178,Daniela Patricia,Sosa,Huerta,006 Martes 6 - 8,github.com,Daniela-Sosa,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,10,100
 1802058,Giovanny,Hernandez,Molinos,006 Martes 6 - 8,github.com,GiovannyHdz,LDOO_EJ_19,10,7,7,7,7,10,10,10,10,7,85
 1618156,Erick Adolfo,Santiago,Cruz,006 Martes 6 - 8,github.com,TheWarlus,Biruls,10,0,0,0,0,0,0,0,0,0,SD
 1941516,Ricardo Emmanuel,Tovar,Domínguez,006 Martes 6 - 8,github.com,RicardoTovar,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,7,97
@@ -49,7 +49,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1621490,Bruno ,Diaz,Ramos,008 Jueves 6 - 8,github.com,brucediaz97,LDOO,0,0,0,0,0,0,0,0,0,0,SD
 1937910,Eduardo,Garza,Cantu,008 Jueves 6 - 8,github.com,LaloGarzaCantu,LDOO2019,10,7,10,7,10,0,10,7,10,7,78
 1810945,Sergio,Lona,Betancourt,008 Jueves 6 - 8,github.com,Serjaxx,LDOOJueves6-8,10,7,10,10,10,10,10,10,0,0,77
-1818192,Luis Mauricio,Garcia,Valdez,008 Jueves 6 - 8,github.com,GarVal2000,LDOO2019,10,7,7,0,0,0,0,0,7,7,38
+1818192,Luis Mauricio,Garcia,Valdez,008 Jueves 6 - 8,github.com,GarVal2000,LDOO2019,10,10,10,10,0,10,10,10,10,10,90
 1819511,Manuel Alejandro,Garza ,Rios,008 Jueves 6 - 8,github.com,alexgr2699,LDOO,10,10,7,10,7,10,10,10,10,10,94
 1727651,Pablo Emilio,Guajardo,De la Cruz,008 Jueves 6 - 8,github.com,HorsePG11,LDOO,0,0,0,0,0,0,0,0,0,0,SD
 1544657,Javier Osvaldo ,Águila ,Cantu,008 Jueves 6 - 8,github.com,osvaldojac,LDOO-JUEVES,0,0,0,0,0,0,0,0,0,0,0
@@ -68,7 +68,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1757274,Diego Alberto,Hernandez,Adame,007 Martes 8 - 10,github.com,1757274,Tareas,10,7,0,0,0,0,0,0,0,0,17
 1806731,Carlos,González,Martínez,008 Jueves 6 - 8,github.com,McCharly17,LDOO_Jueves,0,0,0,0,0,0,0,0,0,0,0
 1680713,Brayan,Bravo,Martínez,006 Martes 6 - 8,github.com,BrayanBravo,LDOO,0,0,0,0,0,0,0,0,0,0,0
-1810863,Jean,Lugo,De La Rosa,006 Martes 6 - 8,github.com,JeanLugo,LDOO-PRUEBA,0,7,7,7,7,7,10,7,7,0,59
+1810863,Jean,Lugo,De La Rosa,006 Martes 6 - 8,github.com,JeanLugo,LDOO-PRUEBA,10,10,10,10,10,10,10,10,7,7,94
 1628056,PINEDA,GALVÁN,ROBERTO DANIEL,006 Martes 6 - 8,github.com,,,0,0,0,0,0,0,0,0,0,0,SD
 1737709,ELIGIO,SORIA,LUIS ANGEL,006 Martes 6 - 8,github.com,,,0,0,0,0,0,0,0,0,0,0,SD
 1837611,CASTRO,JAIME,ALEJANDRO,007 Martes 8 - 10,github.com,,,0,0,0,0,0,0,0,0,0,0,SD
