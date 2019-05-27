@@ -37,8 +37,8 @@ class TestTest(TestCase):
     def test_review_ldb(self):
         querier = get_querier_with_credentials()
         student_row = Series(
-            {"Matricula": "1560020", "repo_site": "github.com", "repo_user": "azaedramirez",
-             "repo_name": "LB"})
+            {"Matricula": "1669068", "repo_site": "github.com", "repo_user": "IvanRuiz11",
+             "repo_name": "Lab-Base-de-Datos"})
         practices = [lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, lbd_pia]
 
         for practice in practices:
@@ -61,7 +61,7 @@ class TestTest(TestCase):
     def test_review_ldoo(self):
         querier = get_querier_with_credentials()
         student_row = Series(
-            {"Matricula": "1851232", "repo_site": "github.com", "repo_user": "GerardoOchoa229",
+            {"Matricula": "1671623", "repo_site": "github.com", "repo_user": "GerardoOchoa229",
              "repo_name": "LDOO_1851232"})
         practices = [ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10]
 

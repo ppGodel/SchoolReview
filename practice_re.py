@@ -3,7 +3,7 @@ def or_re(*args: str) -> str:
 
 
 any_separation_re = r".*"
-word_separator_re = r"(\s|_|#)*"
+word_separator_re = r"(\s|_|#|-)*"
 practica_re = r"P(r(a|á)ctica)?"
 uno_re = r"(0?1|uno)"
 dos_re = r"(0?2|dos)"

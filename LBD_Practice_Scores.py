@@ -203,33 +203,20 @@ def score_practice_lbd(end_date: datetime, start_date: datetime, limit_date: dat
     return score
 
 
-ldoo_min_review = partial(score_practice_lbd, end_date=datetime(2019, 4, 28, 23, 59),
-                          score_file=(lambda x, y: 7))
+lbd_min_review = partial(score_practice_lbd, end_date=datetime(2019, 4, 28, 23, 59),
+                         score_file=(lambda x, y: 7))
 
-lbd_p1 = Practice("Practica1", [p1_re], False, partial(ldoo_min_review,
-                                                       start_date=datetime(2019, 2, 9, 00, 00),
-                                                       limit_date=datetime(2019, 6, 6, 23, 59)))
-lbd_p2 = Practice("Practica2", [p2_re], False, partial(ldoo_min_review,
-                                                       start_date=datetime(2019, 2, 9, 00, 00),
-                                                       limit_date=datetime(2019, 6, 6, 23, 59)))
-lbd_p3 = Practice("Practica3", [p3_re], False, partial(ldoo_min_review,
-                                                       start_date=datetime(2019, 2, 9, 00, 00),
-                                                       limit_date=datetime(2019, 6, 6, 23, 59)))
-lbd_p4 = Practice("Practica4", [p4_re], False, partial(ldoo_min_review,
-                                                       start_date=datetime(2019, 2, 9, 00, 00),
-                                                       limit_date=datetime(2019, 6, 6, 23, 59)))
-lbd_p5 = Practice("Practica5", [p5_re], False, partial(ldoo_min_review,
-                                                       start_date=datetime(2019, 2, 9, 00, 00),
-                                                       limit_date=datetime(2019, 6, 6, 23, 59)))
-lbd_p6 = Practice("Practica6", [p6_re], False, partial(ldoo_min_review,
-                                                       start_date=datetime(2019, 2, 9, 00, 00),
-                                                       limit_date=datetime(2019, 6, 6, 23, 59)))
-lbd_p7 = Practice("Practica7", [p7_re], False, partial(ldoo_min_review,
-                                                       start_date=datetime(2019, 2, 9, 00, 00),
-                                                       limit_date=datetime(2019, 6, 6, 23, 59)))
-lbd_p8 = Practice("Practica8", [p8_re], False, partial(ldoo_min_review,
-                                                       start_date=datetime(2019, 2, 9, 00, 00),
-                                                       limit_date=datetime(2019, 6, 6, 23, 59)))
-lbd_pia = Practice("PIA", [pia_re], False, partial(ldoo_min_review,
-                                                   start_date=datetime(2019, 2, 9, 00, 00),
-                                                   limit_date=datetime(2019, 6, 6, 23, 59)))
+lbd_2nd_review = partial(score_practice_lbd, end_date=datetime(2019, 6, 6, 23, 59),
+                         score_file=(lambda x, y: 7), start_date=datetime(2019, 2, 9, 00, 00),
+                         limit_date=datetime(2019, 6, 6, 23, 59))
+
+lbd_p1 = Practice("Practica1", [p1_re], False, lbd_2nd_review,
+                  )
+lbd_p2 = Practice("Practica2", [p2_re], False, lbd_2nd_review)
+lbd_p3 = Practice("Practica3", [p3_re], False, lbd_2nd_review)
+lbd_p4 = Practice("Practica4", [p4_re], False, lbd_2nd_review)
+lbd_p5 = Practice("Practica5", [p5_re], False, lbd_2nd_review)
+lbd_p6 = Practice("Practica6", [p6_re], False, lbd_2nd_review)
+lbd_p7 = Practice("Practica7", [p7_re], False, lbd_2nd_review)
+lbd_p8 = Practice("Practica8", [p8_re], False, lbd_2nd_review)
+lbd_pia = Practice("PIA", [pia_re], False, lbd_2nd_review)
