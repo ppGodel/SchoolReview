@@ -4,9 +4,9 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1690497,Ariadne,López,Riojas,006 Martes 6 - 8,github.com,AriadneLR,LDOO_EJ_19,7,7,10,10,7,10,10,10,10,7,88
 1877429,Fernando Alberto,Aguirre,Rodríguez,006 Martes 6 - 8,github.com,Fernando-Alberto-1877429,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,10,100
 1813923,Francisco Alexis,Riego,Padilla,006 Martes 6 - 8,github.com,Alexis0711,LDOO_EJ_19,0,10,10,10,7,10,10,7,10,7,81
-1941516,Ricardo Emmanuel,Tovar,Domínguez,006 Martes 6 - 8,github.com,RicardoTovar,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,7,97
+1941516,Ricardo Emmanuel,Tovar,Domínguez,006 Martes 6 - 8,github.com,RicardoTovar,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,10,10
 974511,Sebastian,Castaneda,Marin,006 Martes 6 - 8,github.com,sebascm0880,LDOO_EJ_19,10,7,10,10,10,10,7,10,0,0,74
-1868332,Kevin Alejandro,Lugo ,Reyes,006 Martes 6 - 8,github.com,Kevhn,LDOO_EJ_19,10,10,10,7,7,10,10,10,10,7,91
+1868332,Kevin Alejandro,Lugo ,Reyes,006 Martes 6 - 8,github.com,Kevhn,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,10,100
 1814782,Isaias Fernando,Jerez,Lizardo,006 Martes 6 - 8,github.com,IsaiasJerez,LDOO_EJ_19,10,10,10,10,7,10,10,10,10,7,94
 1941482,Alan ,Cisneros,Monreal,006 Martes 6 - 8,github.com,AlanCisneros1007,LDOO_EJ_19,10,10,10,7,7,10,10,10,10,7,91
 1871178,Daniela Patricia,Sosa,Huerta,006 Martes 6 - 8,github.com,Daniela-Sosa,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,10,100
@@ -14,7 +14,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1618156,Erick Adolfo,Santiago,Cruz,006 Martes 6 - 8,github.com,TheWarlus,Biruls,10,0,0,0,0,0,0,0,0,0,SD
 1941516,Ricardo Emmanuel,Tovar,Domínguez,006 Martes 6 - 8,github.com,RicardoTovar,LDOO_EJ_19,10,10,10,10,10,10,10,10,10,7,97
 1820621,Dina Rebeca,Tijerina,Sandoval,006 Martes 6 - 8,github.com,DinaSandoval-LDOO,LDOO_EJ_19,10,10,10,7,7,10,10,10,10,7,91
-1795860,Paola,Salazar,Rodríguez ,007 Martes 8 - 10,github.com,PaolaSalazar09,LDOO,7,7,7,7,7,0,0,7,10,7,59
+1795860,Paola,Salazar,Rodríguez ,007 Martes 8 - 10,github.com,PaolaSalazar09,LDOO,10,10,10,7,7,7,7,7,10,7,82
 1941492,Daniel Antonio,Alvarez Tostado,Solis,007 Martes 8 - 10,github.com,DanielAntonioATS,LDOO,10,10,10,7,7,7,10,10,10,7,88
 1576336,Jorge Gabriel,Caudillo,Valdes,007 Martes 8 - 10,github.com,jorgegabriel8,,0,0,0,0,0,0,0,0,0,0,SD
 1811747,Edelmiro,Escamilla,Magaña,007 Martes 8 - 10,github.com,MiroX3600,Gran-Prieto-hermoso,10,10,7,10,7,10,10,10,10,7,91
@@ -25,13 +25,13 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1607335,Sung Uk,Chang,,007 Martes 8 - 10,github.com,csu0503,LDOO,10,7,0,0,0,0,0,0,0,0,SD
 1814774,Miguel Angel,Manjarrez,Tellez,007 Martes 8 - 10,github.com,MiguelTellez,LDOO_Practicas,7,7,7,10,7,10,7,0,0,0,55
 1737461,adrian ,Short,Cantu,007 Martes 8 - 10,github.com,Short03,LDOO_Practicas,7,7,0,0,0,0,0,0,0,0,SD
-1803291,Miguel,Del Castillo,Vázquez,007 Martes 8 - 10,github.com,MiguelDelCastillo,TAREAS_LDOO,0,0,0,0,0,0,0,0,0,0,0
+1803291,Miguel,Del Castillo,Vázquez,007 Martes 8 - 10,github.com,MiguelDelCastillo,TAREAS_LDOO,7,7,7,7,7,10,10,0,0,0,55
 1576336,Jorge Gabriel,Caudillo,Valdes,007 Martes 8 - 10,github.com,jorgegabriel8,LDOO,0,0,0,0,0,0,0,0,0,0,0
 1795240,Daniel Alejandro,Cruz,Polo,007 Martes 8 - 10,github.com,Dani0460,LDOO,10,7,10,8,7,7,7,7,7,0,50
 1675080,Salvador Alejandro,Melendez,Villanueva,007 Martes 8 - 10,github.com,Sigma9805,LPOO,10,7,7,7,7,7,7,7,0,0,59
-1800925,Sofia Isabel ,Madrid,Rivas,007 Martes 8 - 10,github.com,SofiaMadrid,LDOO,7,7,7,7,7,7,0,7,7,7,63
+1800925,Sofia Isabel ,Madrid,Rivas,007 Martes 8 - 10,github.com,SofiaMadrid,LDOO,7,7,7,7,7,7,7,7,7,7,70
 1743095,Jesus Alejandro,Garcia,Dorado,007 Martes 8 - 10,github.com,DoradoMx,LDOO,0,0,0,0,0,0,0,0,0,0,0
-1941542,Kevin Alux,Aguilar,Ibáñez,007 Martes 8 - 10,github.com,KevinAlux,Alux,0,7,0,7,7,10,0,0,10,7,48
+1941542,Kevin Alux,Aguilar,Ibáñez,007 Martes 8 - 10,github.com,KevinAlux,Alux,10,7,10,7,7,10,10,0,10,7,78
 1865000,Alexa ,Camacho ,Ayala,007 Martes 8 - 10,github.com,AlexaSherlyn,CamachoAyala,0,10,10,10,0,0,0,0,0,0,30
 1814671,Andrea Melissa,Alonso,Briones,007 Martes 8 - 10,github.com,MelissaAlonso,LDOO,0,0,0,0,0,0,0,0,0,0,SD
 1801827,Abraham,González,Peña,006 Martes 6 - 8,github.com,asgp99,LDOO_EJ_19,10,7,7,7,0,0,0,7,10,7,55
