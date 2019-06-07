@@ -64,7 +64,7 @@ function fillrow(studentsDict, row){
             calif = 65
         }
     }
-    row.getElementsByTagName("td")[5].getElementsByTagName("input")[0].value = calif;
+    row.getElementsByTagName("td")[4].getElementsByTagName("input")[0].value = calif;
 }
 function printRow(msg, row){
     var sid =  row.getElementsByTagName("td")[1].innerText;
