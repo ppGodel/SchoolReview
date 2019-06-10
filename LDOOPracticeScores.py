@@ -24,7 +24,7 @@ def score_practice_1_ldoo(end_date: datetime, start_date: datetime, limit_date: 
     return score
 
 
-ldoo_min_review = partial(score_practice_1_ldoo, end_date=datetime(2019, 4, 28, 23, 59), score_file=(lambda x, y: 7))
+ldoo_min_review = partial(score_practice_1_ldoo, end_date=datetime(2019, 6, 6, 23, 59), score_file=(lambda x, y: 7))
 
 ldoo_p1 = Practice("Practica1", [p1_re], True, partial(ldoo_min_review,
                                                        start_date=datetime(2019, 2, 2, 00, 00),

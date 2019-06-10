@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, List
 
 from pandas import DataFrame, read_csv
 
@@ -18,13 +18,17 @@ def create_repo_calif(querier: Callable, csv_path: str) -> DataFrame:
     return df_lbd
 
 
+def evaluate_class(practices_list: List, config_path: str, csv_path):
+    # for practice in practices_list:
+    #     review_class_by_practice(config_path, practice, csv_path, create_repo_calif)
+    results_df = read_csv(csv_path)
+    results_df["Total"] = sum([results_df[practice.name] for practice in practices_list])
+    results_df.to_csv(csv_path, sep=',', encoding='utf-8', index=False)
+    practice_summary(results_df["Total"])
+
 practices = [ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10]
 
-class_info_csv = "Classes/LDOO_repos_calif.csv"
+class_info_csv = "Classes/LDOO_repos_calif_segundas.csv"
 credentials = 'test/resources/my_data.json'
-for practice in practices:
-    review_class_by_practice(credentials, practice, class_info_csv, create_repo_calif)
-results_df = read_csv(class_info_csv)
-results_df["Total"] = sum([results_df[practice.name] for practice in practices])
-results_df.to_csv(class_info_csv, sep=',', encoding='utf-8', index=False)
-practice_summary(results_df["Total"])
+
+evaluate_class(practices, credentials, class_info_csv)

@@ -27,7 +27,7 @@ function readSingleFileAndApply(fn, e) {
 
 function csvJSON(csv){
     var separator = ",";
-    var lines=csv.split("\n");
+    var lines=csv.replace("\r","").split("\n");
     var result = [];
     var headers=lines[0].split(separator);
     for(var i=1;i<lines.length;i++){
@@ -44,7 +44,6 @@ function csvJSON(csv){
 
 function JSONToDict(JSONList, key){
     var dict = {};
-    console.log(typeof(JSONList));
     for( var i = 0; i < JSONList.length; i++){
         var jsonObj = JSONList[i];
         dict[jsonObj[key]] = jsonObj;

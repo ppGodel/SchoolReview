@@ -206,9 +206,13 @@ def score_practice_lbd(end_date: datetime, start_date: datetime, limit_date: dat
 lbd_min_review = partial(score_practice_lbd, end_date=datetime(2019, 4, 28, 23, 59),
                          score_file=(lambda x, y: 7))
 
-lbd_2nd_review = partial(score_practice_lbd, end_date=datetime(2019, 6, 6, 23, 59),
+lbd_2nd_review = partial(score_practice_lbd, end_date=datetime(2019, 6, 9, 23, 59),
                          score_file=(lambda x, y: 7), start_date=datetime(2019, 2, 9, 00, 00),
-                         limit_date=datetime(2019, 6, 6, 23, 59))
+                         limit_date=datetime(2019, 6, 9, 23, 59))
+
+lbd_2nd_PIA_review = partial(score_practice_lbd, end_date=datetime(2019, 6, 9, 23, 59),
+                         score_file=(lambda x, y: 17), start_date=datetime(2019, 2, 9, 00, 00),
+                         limit_date=datetime(2019, 6, 9, 23, 59))
 
 lbd_p1 = Practice("Practica1", [p1_re], False, lbd_2nd_review,
                   )
