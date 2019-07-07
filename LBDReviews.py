@@ -5,7 +5,8 @@ from pandas import DataFrame, read_csv, Series
 from PracticeReviewer import practice_summary, review_class_by_practice
 from LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
     lbd_pia
-from Students import build_course_from_csv, github_get_repository_list_by
+from Students import build_course_from_csv
+from GitHubQuerier import github_get_repository_list_by
 
 
 def create_repo_calif(querier: Callable, csv_path: str) -> DataFrame:
@@ -20,8 +21,8 @@ def create_repo_calif(querier: Callable, csv_path: str) -> DataFrame:
 
 
 def evaluate_class(practices_list: List, config_path: str, csv_path):
-    # for practice in practices_list:
-    #     review_class_by_practice(config_path, practice, csv_path, create_repo_calif)
+    for practice in practices_list:
+        review_class_by_practice(config_path, practice, csv_path, create_repo_calif)
     results_df = read_csv(csv_path)
     results_df["Total"] = sum([results_df[practice.name] for practice in practices_list])
     results_df.to_csv(csv_path, sep=',', encoding='utf-8', index=False)

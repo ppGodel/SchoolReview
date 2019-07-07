@@ -8,8 +8,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable, Dict, List, Tuple, Optional, Union
 
-from Students import get_response_content, get_querier, github_get_file_info, \
-    github_get_commit_list_of_a_file
+from Students import get_querier
+from GitHubQuerier import github_get_commit_list_of_a_file, github_get_file_info
+from urlTools import get_response_content
 import cchardet
 
 

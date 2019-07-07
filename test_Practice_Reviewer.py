@@ -7,8 +7,8 @@ from PracticeReviewer import parse_csv_df, review_practice_from_df, check_and_re
 from LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
     lbd_pia
 from LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10
-from Students import get_querier, github_get_file, github_get_commit_list_of_a_file, \
-    github_get_file_info
+from Students import get_querier
+from GitHubQuerier import github_get_commit_list_of_a_file, github_get_file_info, github_get_file
 
 
 def get_querier_with_credentials():
@@ -37,21 +37,21 @@ class TestTest(TestCase):
     def test_review_ldb(self):
         querier = get_querier_with_credentials()
         student_row = Series(
-            {"Matricula": "1669068", "repo_site": "github.com", "repo_user": "IvanRuiz11",
-             "repo_name": "Lab-Base-de-Datos"})
+            {"Matricula": "1752659", "repo_site": "github.com", "repo_user": "AlonsoBarrientosLSTI",
+             "repo_name": "LBD-"})
         practices = [lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, lbd_pia]
 
         for practice in practices:
             calif = check_and_review_practice(querier(github_get_file_info),
                                               querier(github_get_commit_list_of_a_file),
                                               student_row, practice)
-            print(calif)
+            print("{}: {}".format( practice.name,calif))
 
     def test_review_pia_ldb(self):
         querier = get_querier_with_credentials()
         student_row = Series(
-            {"Matricula": "1669068", "repo_site": "github.com", "repo_user": "guillermo-fcfm",
-             "repo_name": "Lab-BD"})
+            {"Matricula": "1752659", "repo_site": "github.com", "repo_user": "AlonsoBarrientosLSTI",
+             "repo_name": "LBD-"})
 
         calif = check_and_review_practice(querier(github_get_file_info),
                                           querier(github_get_commit_list_of_a_file),

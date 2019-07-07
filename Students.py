@@ -1,11 +1,9 @@
 import re
 from dataclasses import dataclass
-from functools import partial, lru_cache
-from typing import Optional, Union, Tuple, List, Dict, Callable
+from functools import partial
+from typing import Tuple, List, Dict, Callable
 
 import pandas as pd
-import requests
-import urllib.parse
 
 
 @dataclass
@@ -24,58 +22,6 @@ name = 'Name'
 possible_repositories = dict(LDOO=["LDOO_EJ_19", "LDOO", "LDOO_EJ_2019", "LDOO_Enero_Julio_19",
                                    "LDOO_Enero_Julio_2019"],
                              LBD=['LBD', 'BD', 'BaseDeDatos'])
-
-
-@lru_cache(maxsize=None)
-def github_get_repository_list(client_id: str, client_secret: str, site: str, user: str) -> Dict:
-    base_url = get_base_url("https://api.{site}/users/{user}/repos",
-                            **{"site": site, "user": user})
-    parameters = map_parameters(**{"client_id": client_id, "client_secret": client_secret})
-    url = get_url(base_url, parameters)
-    return get_response_json(url)
-
-
-@lru_cache(maxsize=None)
-def github_get_commit_list_of_a_file(client_id: str, client_secret: str, site, user, repo, file_path) -> List[Dict]:
-    base_url = get_base_url("https://api.{site}/repos/{user}/{repo}/commits",
-                            **{"site": site, "user": user, "repo": repo})
-    parameters = map_parameters(
-        **{"client_id": client_id, "client_secret": client_secret, "path": file_path})
-    url = get_url(base_url, parameters)
-    return get_response_json(url)
-
-
-@lru_cache(maxsize=None)
-def github_get_file_info(client_id: str, client_secret: str, site: str, user: str, repo: str, file_path: str) -> \
-        Optional[Union[List[Dict], Dict]]:
-    base_url = "https://api.{site}/repos/{user}/{repo}/contents/{file}". \
-        format(site=site, user=user, repo=urllib.parse.quote(repo), file=urllib.parse.quote(file_path))
-    parameters = map_parameters(**{"client_id": client_id, "client_secret": client_secret})
-    url = get_url(base_url, parameters)
-    return get_response_json(url)
-
-
-def github_get_file(client_id: str, client_secret: str, site: str, user: str, repo: str, file_path: str) -> Optional[bytes]:
-    file_info = None
-    try:
-        file_info = github_get_file_info(client_id, client_secret, site, user, repo, file_path)
-    except Exception as e:
-        print("Error found at get file from url {}".format(e))
-    if not file_info:
-        return None
-    download_url = file_info['download_url']
-    return get_response_content(download_url)
-
-
-def github_get_repository_list_by(client_id: str, client_secret: str, site: str, user: str, prop: str) \
-        -> Optional[List[str]]:
-    repo_list = github_get_repository_list(client_id, client_secret, site, user)
-    if not repo_list:
-        return None
-    try:
-        return [x.get(prop) for x in repo_list]
-    except AttributeError:
-        print("site: {}, git_user: {}, property: {}".format(site,user,prop))
 
 
 def get_fn_with_credentials(client_id: str, client_secret: str, function: Callable) -> Callable:
@@ -172,71 +118,3 @@ def _remove_protocol_from_url(url: str):
     return return_url
 
 
-@lru_cache(maxsize=None)
-def get_response_content(download_url) -> bytes:
-    content = None
-    response = requests.get(download_url)
-    if response.status_code >= 200 <= 250:
-        content = response.content
-    return content
-
-
-@lru_cache(maxsize=None)
-def get_response_json(url) -> Optional[Union[Dict, List[Dict]]]:
-    response = requests.get(url)
-    json = None
-    if response.status_code >= 200 <= 250:
-        json = response.json()
-    return json
-
-
-def get_url(base_url: str, params: str):
-    return "{base}?{parameters}".format(base=base_url, parameters=params)
-
-
-def map_parameters(**params):
-    parameters = None
-    if params:
-        parameters = "&".join([f"{urllib.parse.quote(k)}={urllib.parse.quote(v)}" for (k, v) in params.items()])
-    return parameters
-
-
-def get_base_url(url_template: str, **kwargs):
-    return url_template.format(**kwargs)
-
-# def review_student_practice(repo_site: str, repo_user: str, repo_name: str, practice_obj: dict):
-#     p_due_date = datetime.datetime.strptime(practice_obj.get('due_date'), "%Y-%m-%d %H:%M")
-#     calif = None
-#     file_name = None
-#     commit_list = None
-#     for poss_name in practice_obj.get('possible_name'):
-#         commit_list = RepositoryQuerier.get_commit_list_of_a_file(repo_site, repo_user, repo_name, poss_name)
-#         if commit_list:
-#             file_name = poss_name
-#             break
-#     if not commit_list:
-#         if datetime.datetime.now() < p_due_date:
-#             return calif
-#         else:
-#             return 0
-#     first_commit = commit_list[len(commit_list) - 1]['commiter']['date']
-#     first_commit_date = datetime.datetime.strptime(first_commit, "%Y-%m-%dT%H:%M:%sZ")
-#     if first_commit_date < p_due_date:
-#         calif = practice_obj.get('due_value')
-#     else:
-#         calif = 0
-#     # eval_list = practice_obj.get('review_rules')
-#     # file_to_review = RepositoryQuerier.get_file(repo_site,repo_user, repo_name, file_name)
-#     # for eval_rule in eval_list:
-#     #    matches = re.search(eval_rule.get('regex'), file_to_review)
-#     #    if matches:
-#     #        eval_code = matches.group(eval_rule.get('group'))
-#     #        eval_code.split(',')
-#     return calif
-#
-#
-# def review_practice(students_df: pd.DataFrame, practice_dict: dict):
-#     return_value = students_df.apply(lambda row: review_student_practice(
-#         row.get('repo_site', 'repo_user', 'repo_name'), practice_dict),
-#                                      axis='columns', result_type='expand')
-#     return return_value
