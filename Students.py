@@ -19,7 +19,7 @@ LDOO = 'LDOO'
 LBD = 'LBD'
 name = 'Name'
 
-possible_repositories = dict(LDOO=["LDOO_EJ_19", "LDOO", "LDOO_EJ_2019", "LDOO_Enero_Julio_19",
+POSSIBLE_REPOSITORIES = dict(LDOO=["LDOO_EJ_19", "LDOO", "LDOO_EJ_2019", "LDOO_Enero_Julio_19",
                                    "LDOO_Enero_Julio_2019"],
                              LBD=['LBD', 'BD', 'BaseDeDatos'])
 
@@ -89,7 +89,7 @@ def validate_repository(get_repolist_map_by: Callable[[str, str, str], List[Dict
 
 def search_valid_repository(class_name, repo_list):
     validated_repo = None
-    for x in possible_repositories.get(class_name):
+    for x in POSSIBLE_REPOSITORIES.get(class_name):
         if x in repo_list:
             validated_repo = x
             break
