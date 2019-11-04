@@ -3,28 +3,17 @@ import json
 import re
 from functools import partial
 
-from pandas import DataFrame, Series, read_csv
+from rx import operators as op
+from pandas import DataFrame, Series
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Callable, Dict, List, Tuple, Optional, Union
+from typing import Callable, Dict, List, Tuple, Optional, Union, Any
 
 from Students import get_response_content, get_querier, github_get_file_info, \
     github_get_commit_list_of_a_file
-import cchardet
-
-
-def convert_encoding(data: bytes, new_coding: str = 'UTF-8') -> bytes:
-    encoding = cchardet.detect(data)['encoding']
-    decoded_data = data.decode(encoding, data)
-    if new_coding.upper() != encoding.upper():
-        decoded_data = data.decode(encoding, data).encode(new_coding)
-    return decoded_data
-
-
-def convert_decoding(data: bytes) -> str:
-    encoding = cchardet.detect(data)['encoding']
-    decoded_data = data.decode(encoding, data)
-    return decoded_data
+from src.utils import reactive
+from src.utils.pandas import parse_csv_df
+from src.utils.reactive import do_reactive
 
 
 @dataclass
@@ -47,11 +36,6 @@ class Practice:
     score_function: score_function_type
 
 
-def parse_csv_df(csv_path: str) -> DataFrame:
-    students_df = read_csv(csv_path)
-    return students_df
-
-
 def review_practice_from_df(df: DataFrame, fn_get_file_info: Callable[[str], Dict],
                             fn_get_commit_list_of_a_file: Callable[[str], List[Dict]],
                             practice: Practice) -> Series:
@@ -60,6 +44,18 @@ def review_practice_from_df(df: DataFrame, fn_get_file_info: Callable[[str], Dic
                                               fn_get_commit_list_of_a_file,
                                               row, practice), axis=1)
 
+
+def rx_review_practice_from_df(df: DataFrame, fn_get_file_info: Callable[[str], Dict],
+                               fn_get_commit_list_of_a_file: Callable[[str], List[Dict]],
+                               practice: Practice, fn: Callable[[Series], Any]) -> None:
+    def check_and_review_practice_data(row: Series):
+        return check_and_review_practice(fn_get_file_info, fn_get_commit_list_of_a_file, row, practice)
+
+    operations = [op.map(lambda x: x[1]),  # ignore the index, use the data
+                  op.map(check_and_review_practice_data),
+                  op.to_list(),
+                  op.map(lambda results: Series(results))]
+    do_reactive(df.iterrows(), fn, operations)
 
 def check_and_review_practice(fn_get_file_info: Callable[[str, str, str], Dict],
                               fn_get_commit_list_of_a_file: Callable[[str, str, str], List[Dict]],
@@ -93,7 +89,6 @@ def check_practice(row: Series, practice: Practice) -> Optional[int]:
         pass
     return calif
 
-
 def valid_row(row: Series) -> bool:
     def check_column_value(column_value) -> bool:
         return column_value and column_value == column_value
@@ -119,7 +114,7 @@ def score_practice(practice_files: List[Tuple[score_function_type, str, Practice
     for score_fn, p_name, p_file_info in practice_files:
         score = score_fn(practice_name=p_name, file=p_file_info)
         scores.append(score)
-    return max(scores)
+    return max(scores,0)
 
 
 def get_practice_files(fn_get_file_info: Callable[[str], Dict],

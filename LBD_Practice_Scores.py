@@ -3,7 +3,7 @@ from datetime import datetime
 from functools import partial
 from typing import Callable
 
-from PracticeReviewer import Practice, PracticeFile
+from src.reviewer.PracticeReviewer import Practice, PracticeFile
 from practice_re import p1_re, p2_re, p3_re, p4_re, p5_re, p6_re, p7_re, p8_re, pia_re
 
 

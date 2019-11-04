@@ -105,3 +105,4 @@ venv.bak/
 
 test/resources/my_data.json
 .idea/
+/SchoolReview.iml

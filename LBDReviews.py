@@ -1,8 +1,8 @@
 from typing import Callable
 
-from pandas import DataFrame, read_csv, Series
+from pandas import DataFrame, read_csv
 
-from PracticeReviewer import practice_summary, review_class_by_practice
+from src.reviewer.PracticeReviewer import practice_summary, review_class_by_practice
 from LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
     lbd_pia
 from Students import build_course_from_csv, github_get_repository_list_by

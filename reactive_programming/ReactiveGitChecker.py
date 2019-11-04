@@ -20,23 +20,23 @@ pool_scheduler = ThreadPoolScheduler(optimal_thread_count)
 
 # Create Process 1
 of("Alpha", "Beta", "Gamma", "Delta", "Epsilon").pipe(
-    op.map(lambda s: intense_calculation(s)),
-    op.subscribe_on(pool_scheduler)) \
-    .subscribe(on_next=lambda s: print("PROCESS 1: {0} {1}".format(current_thread().name, s)),
-               on_error=lambda e: print(e), on_completed=lambda: print("PROCESS 1 done!"))
+op.map(lambda s: intense_calculation(s)),
+op.subscribe_on(pool_scheduler)) \
+.subscribe(on_next=lambda s: print("PROCESS 1: {0} {1}".format(current_thread().name, s)),
+           on_error=lambda e: print(e), on_completed=lambda: print("PROCESS 1 done!"))
 
 # Create Process 2
 range(1, 10).pipe(
-    op.map(lambda s: intense_calculation(s)),
-    op.subscribe_on(pool_scheduler)). \
-    subscribe(on_next=lambda i: print("PROCESS 2: {0} {1}".format(current_thread().name, i)),
-              on_error=lambda e: print(e), on_completed=lambda: print("PROCESS 2 done!"))
+op.map(lambda s: intense_calculation(s)),
+op.subscribe_on(pool_scheduler)). \
+subscribe(on_next=lambda i: print("PROCESS 2: {0} {1}".format(current_thread().name, i)),
+          on_error=lambda e: print(e), on_completed=lambda: print("PROCESS 2 done!"))
 
 # Create Process 3, which is infinite
 range(1, 1000).pipe(
-    op.map(lambda i: i * 100),
-    op.map(lambda s: intense_calculation(s)),
-    op.observe_on(pool_scheduler))\
+op.map(lambda i: i * 100),
+op.map(lambda s: intense_calculation(s)),
+op.observe_on(pool_scheduler))\
     .subscribe_(on_next=lambda i: print("PROCESS 3: {0} {1}".format(current_thread().name, i)),
               on_error=lambda e: print(e))
 
