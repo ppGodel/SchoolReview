@@ -40,8 +40,8 @@ class TestTest(TestCase):
         df_lbd = parse_csv_df("test/resources/LBD_repos.csv")
         rx_review_practice_from_df(df_lbd, querier(github_get_file_info),
                                      querier(github_get_commit_list_of_a_file),
-                                     lbd_pia, (lambda x: df_lbd[lbd_p1.name] = x))
-        df_lbd[lbd_p1.name] = p1
+                                     lbd_pia, (lambda x: df_lbd[lbd_p1.name] ))
+        # df_lbd[lbd_p1.name] = p1
         df_lbd.to_csv("test/resources/LBD_repos.csv")
 
 
