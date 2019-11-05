@@ -1,14 +1,16 @@
 import json
+from typing import Dict, List
 from unittest import TestCase
 
 from pandas import Series
 
-from src.reviewer.PracticeReviewer import review_practice_from_df, check_and_review_practice, rx_review_practice_from_df
+from src.reviewer.PracticeReviewer import review_practice_from_df, check_and_review_practice
+from src.reviewer.git_retrivers import rx_review_practice_from_df
 from src.utils.pandas import parse_csv_df
-from LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
+from src.reviewer.scores.LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
     lbd_pia
-from LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10
-from Students import get_querier, github_get_file, github_get_commit_list_of_a_file, \
+from src.reviewer.scores.LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10
+from src.Students import get_querier, github_get_file, github_get_commit_list_of_a_file, \
     github_get_file_info
 
 
@@ -16,6 +18,22 @@ def get_querier_with_credentials():
     with open('test/resources/my_data.json') as f:
         my_data = json.load(f)
     return get_querier(my_data["client_id"], my_data["client_secret"])
+
+
+file_info_map = {'tarea1': {},
+                 'tarea2': {},
+                 'tarea3': {}}
+file_commit_map = {'tarea1': [{}],
+                   'tarea2': [{}],
+                   'tarea3': [{}]}
+
+
+def get_mock_file_info(site: str, repo: str, user: str, filepath: str) -> Dict:
+    return file_info_map.get(filepath, {})
+
+
+def get_mock_commit_list_of_a_file(site: str, repo: str, user: str, filepath: str) -> List[Dict]:
+    return file_commit_map.get(filepath, [{}])
 
 
 class TestTest(TestCase):
@@ -36,11 +54,10 @@ class TestTest(TestCase):
         df_lbd.to_csv("test/resources/LBD_repos.csv")
 
     def test_review_group_lbd_rx(self):
-        querier = get_querier_with_credentials()
         df_lbd = parse_csv_df("test/resources/LBD_repos.csv")
-        rx_review_practice_from_df(df_lbd, querier(github_get_file_info),
-                                     querier(github_get_commit_list_of_a_file),
-                                     lbd_pia, (lambda x: df_lbd[lbd_p1.name] ))
+        rx_review_practice_from_df(df_lbd, get_mock_file_info,
+                                   get_mock_commit_list_of_a_file,
+                                   lbd_pia, (lambda x: df_lbd[lbd_p1.name]))
         # df_lbd[lbd_p1.name] = p1
         df_lbd.to_csv("test/resources/LBD_repos.csv")
 

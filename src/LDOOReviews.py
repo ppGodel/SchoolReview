@@ -1,27 +1,24 @@
-from typing import Callable
-
 from pandas import DataFrame, read_csv
 
-from src.reviewer.PracticeReviewer import practice_summary, review_class_by_practice
-from LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
-    lbd_pia
-from Students import build_course_from_csv, github_get_repository_list_by
+from src.reviewer.scores.LDOOPracticeScores import *
+from src.reviewer.git_retrivers import review_class_by_practice, practice_summary
+from src.Students import build_course_from_csv, github_get_repository_list_by
 
 
 def create_repo_calif(querier: Callable, csv_path: str) -> DataFrame:
-    base_columns = ["Matricula", "Nombres", "Apellido Paterno", "Apellido Materno",
-                    "Laboratorio a cursar"]
+    base_columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido",
+                    "Grupo"]
     new_columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido", "Grupo"]
     df_lbd = build_course_from_csv(querier(github_get_repository_list_by),
-                                   "Classes/LBD_EJ_19.csv", 'Repositorio',
+                                   "Classes/LDOO_EJ_19.csv", 'Repositorio',
                                    base_columns, new_columns)
     df_lbd.to_csv(csv_path, sep=',', encoding='utf-8', index=False)
     return df_lbd
 
 
-practices = [lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, lbd_pia]
+practices = [ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10]
 
-class_info_csv = "Classes/LBD_repos_calif.csv"
+class_info_csv = "Classes/LDOO_repos_calif.csv"
 credentials = 'test/resources/my_data.json'
 for practice in practices:
     review_class_by_practice(credentials, practice, class_info_csv, create_repo_calif)
