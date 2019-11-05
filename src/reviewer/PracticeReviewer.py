@@ -7,7 +7,8 @@ from pandas import DataFrame, Series
 from dataclasses import dataclass
 from datetime import datetime
 from typing import Callable, Dict, List, Tuple, Optional, Union
-from src.Students import get_response_content, get_querier
+from src.utils.url import get_response_content
+from src.reviewer.git_retrivers import get_querier
 
 
 @dataclass

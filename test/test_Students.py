@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from src.Students import get_querier, build_student, github_get_repository_list_by, build_course_from_csv
+from src.Students import build_student
+from src.reviewer.git_retrivers import build_course_from_csv, github_get_repository_list_by, get_querier
 import json
 
 LDOO = 'LDOO'

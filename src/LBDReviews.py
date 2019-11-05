@@ -2,10 +2,10 @@ from typing import Callable
 
 from pandas import DataFrame, read_csv
 
-from src.reviewer.git_retrivers import review_class_by_practice, practice_summary
+from src.reviewer.git_retrivers import review_class_by_practice, practice_summary, build_course_from_csv, \
+    github_get_repository_list_by
 from src.reviewer.scores.LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
     lbd_pia
-from src.Students import build_course_from_csv, github_get_repository_list_by
 
 
 def create_repo_calif(querier: Callable, csv_path: str) -> DataFrame:
