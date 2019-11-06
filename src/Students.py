@@ -1,10 +1,4 @@
 from dataclasses import dataclass
-from functools import partial
-from typing import List, Dict, Callable
-
-import pandas as pd
-
-from src.reviewer.git_retrivers import get_repo_info
 
 
 @dataclass
@@ -19,22 +13,6 @@ class Student:
 LDOO = 'LDOO'
 LBD = 'LBD'
 name = 'Name'
-
-
-def get_fn_with_credentials(client_id: str, client_secret: str, function: Callable) -> Callable:
-    return partial(function, client_id, client_secret)
-
-
-def process_df(get_repo_list_by: Callable[[str, str, str], List[Dict]], students_df: pd.DataFrame, git_column: str):
-    return students_df.apply(
-        lambda row: get_repo_info(get_repo_list_by, row.get(git_column), LBD),
-        axis='columns', result_type='expand')
-
-
-def build_student(get_repolist_map_by: Callable[[str, str, str], List[Dict]], matricula: str, class_name: str,
-                  url: str) -> Student:
-    site, user, repo, = get_repo_info(get_repolist_map_by, url, class_name)
-    return Student(matricula, class_name, site, user, repo) if site and user else None
 
 # def review_student_practice(repo_site: str, repo_user: str, repo_name: str, practice_obj: dict):
 #     p_due_date = datetime.datetime.strptime(practice_obj.get('due_date'), "%Y-%m-%d %H:%M")

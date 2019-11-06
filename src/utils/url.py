@@ -6,7 +6,7 @@ from typing import Optional, Union, Dict, List
 import requests
 
 
-def _remove_protocol_from_url(url: str):
+def remove_protocol_from_url(url: str):
     return_url = url
     is_match = re.match('https?://', url)
     if is_match:

@@ -2,15 +2,16 @@ import json
 from typing import Dict, List
 from unittest import TestCase
 
-from pandas import Series
+from pandas import Series, DataFrame
 
-from src.reviewer.PracticeReviewer import review_practice_from_df, check_and_review_practice
-from src.reviewer.git_retrivers import rx_review_practice_from_df, github_get_commit_list_of_a_file, \
-    github_get_file_info, github_get_file, get_querier
-from src.utils.pandas import parse_csv_df
-from src.reviewer.scores.LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
+from reviewer.PracticeReviewer import review_practice_from_df, check_and_review_practice
+from reviewer.git_retrivers import rx_review_practice_from_df, get_querier
+from reviewer.github_request_client import github_get_commit_list_of_a_file, github_get_file_info, github_get_file
+from reviewer.scores.LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
     lbd_pia
-from src.reviewer.scores.LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10
+from reviewer.scores.LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, \
+    ldoo_p9, ldoo_p10
+from utils.pandas import parse_csv_df
 
 
 def get_querier_with_credentials():
@@ -19,12 +20,17 @@ def get_querier_with_credentials():
     return get_querier(my_data["client_id"], my_data["client_secret"])
 
 
-file_info_map = {'tarea1': {},
+file_info_map = {'tarea1': {},  # path : List of files in path
                  'tarea2': {},
-                 'tarea3': {}}
+                 'tarea3': {},
+                 '': [{'name': 'PIAFINAL.sql', 'type': 'file', 'path': 'PIAFINAL.sql',
+                       'download_url': 'mock.url/PIAFINAL.SQL'}]}
 file_commit_map = {'tarea1': [{}],
                    'tarea2': [{}],
-                   'tarea3': [{}]}
+                   'PIAFINAL.sql': [{}, {'commit': {'committer': {'date': '2019-06-05T04:00:00Z'}}}],
+                   }
+file_content_map = {'mock.url/PIAFINAL.SQL': b'Contenido del tarea'
+                    }
 
 
 def get_mock_file_info(site: str, repo: str, user: str, filepath: str) -> Dict:
@@ -33,6 +39,10 @@ def get_mock_file_info(site: str, repo: str, user: str, filepath: str) -> Dict:
 
 def get_mock_commit_list_of_a_file(site: str, repo: str, user: str, filepath: str) -> List[Dict]:
     return file_commit_map.get(filepath, [{}])
+
+
+def get_mock_file_content(path: str) -> bytes:
+    return file_content_map[path]
 
 
 class TestTest(TestCase):
@@ -53,12 +63,47 @@ class TestTest(TestCase):
         df_lbd.to_csv("test/resources/LBD_repos.csv")
 
     def test_review_group_lbd_rx(self):
-        df_lbd = parse_csv_df("test/resources/LBD_repos.csv")
-        rx_review_practice_from_df(df_lbd, get_mock_file_info,
-                                   get_mock_commit_list_of_a_file,
-                                   lbd_pia, (lambda x: df_lbd[lbd_p1.name]))
+        def get_dict_to_test() -> DataFrame:
+            return DataFrame([
+                {'Matricula': '1',
+                 'Nombre': 'foo',
+                 'Primer apellido': 'Last1',
+                 'Segundo apellido': 'Last2',
+                 'Grupo': 'LBD',
+                 'repo_site': 'github.com',
+                 'repo_user': 'foo',
+                 'repo_name': 'LBD',
+                 'Practica1': None},
+                {'Matricula': '2',
+                 'Nombre': 'bar',
+                 'Primer apellido': 'Last1',
+                 'Segundo apellido': 'Last2',
+                 'Grupo': 'LBD',
+                 'repo_site': 'github.com',
+                 'repo_user': 'bar',
+                 'repo_name': 'LBD',
+                 'Practica1': None},
+                {'Matricula': '3',
+                 'Nombre': 'baz',
+                 'Primer apellido': 'Last1',
+                 'Segundo apellido': 'Last2',
+                 'Grupo': 'LBD',
+                 'repo_site': 'github.com',
+                 'repo_user': 'baz',
+                 'repo_name': 'LBD',
+                 'Practica1': None},
+            ])
+
+        df_lbd = get_dict_to_test()
+        obs = rx_review_practice_from_df(df_lbd, get_mock_file_info,
+                                         get_mock_commit_list_of_a_file,
+                                         get_mock_file_content,
+                                         lbd_pia)
+        l = []
+        obs.subscribe(lambda x: l.append(x))
+        self.assert_(l)
         # df_lbd[lbd_p1.name] = p1
-        df_lbd.to_csv("test/resources/LBD_repos.csv")
+        # df_lbd.to_csv("test/resources/LBD_repos.csv")
 
 
     def test_review_ldb(self):

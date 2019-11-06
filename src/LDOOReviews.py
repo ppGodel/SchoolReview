@@ -1,8 +1,8 @@
 from pandas import DataFrame, read_csv
 
+from src.reviewer.git_retrivers import review_class_by_practice, practice_summary, build_course_from_csv
+from src.reviewer.github_request_client import github_get_repository_list_by
 from src.reviewer.scores.LDOOPracticeScores import *
-from src.reviewer.git_retrivers import review_class_by_practice, practice_summary, build_course_from_csv, \
-    github_get_repository_list_by
 
 
 def create_repo_calif(querier: Callable, csv_path: str) -> DataFrame:

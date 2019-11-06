@@ -1,47 +1,51 @@
 import datetime
-import urllib.parse
-from functools import partial, lru_cache
-from typing import Callable, Dict, List, Tuple, Optional, Union
+import json
+from functools import partial
+from typing import Callable, Dict, List, Tuple
 
 import pandas as pd
 import rx
 from pandas import DataFrame, Series
 from rx import operators as op
 
-from src.Students import process_df, get_fn_with_credentials
-from src.utils.url import get_response_content, get_response_json, get_url, map_parameters, get_base_url, \
-    _remove_protocol_from_url
-from src.reviewer.PracticeReviewer import Practice, review_practice_from_df, \
-    score_function_type, PracticeFile, get_practice_files, _check_and_review_practice, get_querier_with_credentials
-from src.utils import reactive
-from src.utils.pandas import parse_csv_df
+from Students import LBD, Student
+from reviewer.PracticeReviewer import Practice, review_practice_from_df, \
+    score_function_type, PracticeFile, get_practice_files, _check_and_review_practice
+from reviewer.github_request_client import github_get_commit_list_of_a_file, github_get_file_info
+from utils import reactive
+from utils.pandas import parse_csv_df
+from utils.url import remove_protocol_from_url, get_response_content
 
 
 def review_practice_from_df_from_git(df: DataFrame, fn_get_file_info: Callable[[str], Dict],
                                      fn_get_commit_list_of_a_file: Callable[[str], List[Dict]],
+                                     get_file_content: Callable[[str], bytes],
                                      practice: Practice) -> Series:
     check_and_review_practice_from_row = check_and_review_practice_from_git(
-        fn_get_file_info, fn_get_commit_list_of_a_file, practice)
+        fn_get_file_info, fn_get_commit_list_of_a_file, get_file_content, practice)
     return review_practice_from_df(df, check_and_review_practice_from_row)
 
 
-def get_practice_file_from_git(fn_get_file_info: Callable[[str], Dict],
-                               fn_get_commit_list_of_a_file: Callable[[str], List[Dict]],
-                               practice: Practice) -> List[Tuple[score_function_type,
+def get_practice_file_from_git(get_file_info: Callable[[str], Dict],
+                               get_commit_list_of_a_file: Callable[[str], List[Dict]],
+                               get_file_content: Callable[[str], bytes], practice: Practice) \
+        -> List[Tuple[score_function_type,
                                                                  str, PracticeFile]]:
     return [(practice.score_function, practice.name, practice_file_info) for practice_file_info in
-            get_practice_files(fn_get_file_info, fn_get_commit_list_of_a_file,
+            get_practice_files(get_file_info, get_commit_list_of_a_file, get_file_content,
                                practice.aliases, practice.as_dir) if practice_file_info]
 
 
 def check_and_review_practice_from_git(fn_get_file_info: Callable[[str, str, str], Dict],
-                                       fn_get_commit_list_of_a_file: Callable[[str, str, str, str], List[Dict]],
+                                       fn_get_commit_list_of_a_file:
+                                       Callable[[str, str, str, str], List[Dict]],
+                                       get_file_content: Callable[[str], bytes],
                                        practice: Practice) -> Callable[[Series], int]:
     def _check_and_review_practice_from_git(row: Series) -> int:
         get_file = partial(fn_get_file_info, row.get("repo_site"), row.get("repo_user"), row.get("repo_name"))
         get_commit_list = partial(fn_get_commit_list_of_a_file, row.get("repo_site"), row.get("repo_user"),
                                   row.get("repo_name"))
-        get_practice_list = partial(get_practice_file_from_git, get_file, get_commit_list)
+        get_practice_list = partial(get_practice_file_from_git, get_file, get_commit_list, get_file_content)
         return _check_and_review_practice(get_practice_list, row, practice)
 
     return _check_and_review_practice_from_git
@@ -57,6 +61,7 @@ def review_class_by_practice(config_path: str, practice_info: Practice, csv_path
         df_lbd = create_repo_calif_df(querier, csv_path)
     practice_calif = review_practice_from_df_from_git(df_lbd, querier(github_get_file_info),
                                                       querier(github_get_commit_list_of_a_file),
+                                                      get_response_content,
                                                       practice_info)
     df_lbd[practice_info.name] = practice_calif
     df_lbd.to_csv(csv_path, sep=',', encoding='utf-8', index=False)
@@ -64,15 +69,28 @@ def review_class_by_practice(config_path: str, practice_info: Practice, csv_path
     print("Finish at {}".format(datetime.now()))
 
 
+class DFSaver(rx.core.Observer):
+    def __init__(self, df: DataFrame):
+        self.df = df  # type: DataFrame
+        self.practice_results = []  # type: List[Tuple[str,Series]]
+
+    def on_next(self, practice_results: Tuple[str, Series]):
+        self.practice_results = self.practice_results + [practice_results]
+
+    def on_complete(self):
+        self.df = self.df.assign(**dict(self.practice_results))
+
+
 def rx_review_practice_from_df(df: DataFrame, fn_get_file_info: Callable[[str, str, str], Dict],
                                fn_get_commit_list_of_a_file: Callable[[str, str, str, str], List[Dict]],
-                               practice: Practice) -> rx.Observable[Series]:
+                               get_file_content: Callable[[str], bytes],
+                               practice: Practice) -> rx.Observable:
     practice_reviewer = check_and_review_practice_from_git(fn_get_file_info, fn_get_commit_list_of_a_file,
-                                                           practice)
+                                                           get_file_content, practice)
     operations = [op.map(lambda x: x[1]),  # ignore the index, use the data
                   op.map(practice_reviewer),
                   op.to_list(),
-                  op.map(lambda results: Series(results))]
+                  op.map(lambda results: {practice.name: Series(results)})]
     return reactive.iter_to_observable(df.iterrows()).pipe(*operations)
 
 
@@ -94,61 +112,9 @@ def build_course_from_csv(
     return new_df
 
 
-def github_get_repository_list_by(client_id: str, client_secret: str, site: str, user: str, prop: str) \
-        -> Optional[List[str]]:
-    repo_list = github_get_repository_list(client_id, client_secret, site, user)
-    if not repo_list:
-        return None
-    try:
-        return [x.get(prop) for x in repo_list]
-    except AttributeError:
-        print("site: {}, git_user: {}, property: {}".format(site,user,prop))
-
-
 possible_repositories = dict(LDOO=["LDOO_EJ_19", "LDOO", "LDOO_EJ_2019", "LDOO_Enero_Julio_19",
                                    "LDOO_Enero_Julio_2019"],
                              LBD=['LBD', 'BD', 'BaseDeDatos'])
-
-
-@lru_cache(maxsize=None)
-def github_get_repository_list(client_id: str, client_secret: str, site: str, user: str) -> Dict:
-    base_url = get_base_url("https://api.{site}/users/{user}/repos",
-                            **{"site": site, "user": user})
-    parameters = map_parameters(**{"client_id": client_id, "client_secret": client_secret})
-    url = get_url(base_url, parameters)
-    return get_response_json(url)
-
-
-@lru_cache(maxsize=None)
-def github_get_commit_list_of_a_file(client_id: str, client_secret: str, site, user, repo, file_path) -> List[Dict]:
-    base_url = get_base_url("https://api.{site}/repos/{user}/{repo}/commits",
-                            **{"site": site, "user": user, "repo": repo})
-    parameters = map_parameters(
-        **{"client_id": client_id, "client_secret": client_secret, "path": file_path})
-    url = get_url(base_url, parameters)
-    return get_response_json(url)
-
-
-@lru_cache(maxsize=None)
-def github_get_file_info(client_id: str, client_secret: str, site: str, user: str, repo: str, file_path: str) -> \
-        Optional[Union[List[Dict], Dict]]:
-    base_url = "https://api.{site}/repos/{user}/{repo}/contents/{file}". \
-        format(site=site, user=user, repo=urllib.parse.quote(repo), file=urllib.parse.quote(file_path))
-    parameters = map_parameters(**{"client_id": client_id, "client_secret": client_secret})
-    url = get_url(base_url, parameters)
-    return get_response_json(url)
-
-
-def github_get_file(client_id: str, client_secret: str, site: str, user: str, repo: str, file_path: str) -> Optional[bytes]:
-    file_info = None
-    try:
-        file_info = github_get_file_info(client_id, client_secret, site, user, repo, file_path)
-    except Exception as e:
-        print("Error found at get file from url {}".format(e))
-    if not file_info:
-        return None
-    download_url = file_info['download_url']
-    return get_response_content(download_url)
 
 
 def get_querier(client_id: str, client_secret: str) -> Callable:
@@ -159,7 +125,7 @@ def get_repo_info(get_repolist_map_by: Callable[[str, str, str], List[Dict]], ur
         -> Tuple[str, str, str]:
     site = user = repo = None
     try:
-        base_url = _remove_protocol_from_url(url)
+        base_url = remove_protocol_from_url(url)
         url_pieces = base_url.split('/')
         pieces = len(url_pieces)
         if pieces > 1 and url_pieces[0] and url_pieces[1]:
@@ -206,3 +172,25 @@ def _format_site(site):
     if sp_len > 1:
         formatted_site = site_pieces[sp_len - 2] + '.' + site_pieces[sp_len - 1]
     return formatted_site
+
+
+def get_fn_with_credentials(client_id: str, client_secret: str, function: Callable) -> Callable:
+    return partial(function, client_id, client_secret)
+
+
+def process_df(get_repo_list_by: Callable[[str, str, str], List[Dict]], students_df: pd.DataFrame, git_column: str):
+    return students_df.apply(
+        lambda row: get_repo_info(get_repo_list_by, row.get(git_column), LBD),
+        axis='columns', result_type='expand')
+
+
+def build_student(get_repolist_map_by: Callable[[str, str, str], List[Dict]], matricula: str, class_name: str,
+                  url: str) -> Student:
+    site, user, repo, = get_repo_info(get_repolist_map_by, url, class_name)
+    return Student(matricula, class_name, site, user, repo) if site and user else None
+
+
+def get_querier_with_credentials(config_path: str):
+    with open(config_path) as f:
+        my_data = json.load(f)
+    return get_querier(my_data["client_id"], my_data["client_secret"])

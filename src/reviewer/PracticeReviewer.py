@@ -1,14 +1,12 @@
 import datetime
-import json
 import re
-from functools import reduce
-import numpy as np
-from pandas import DataFrame, Series
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Callable, Dict, List, Tuple, Optional, Union
-from src.utils.url import get_response_content
-from src.reviewer.git_retrivers import get_querier
+from functools import reduce
+from typing import Callable, Dict, List, Tuple, Optional, Union, Any
+
+import numpy as np
+from pandas import DataFrame, Series
 
 
 @dataclass
@@ -56,26 +54,22 @@ def check_and_review_practice(practice_list: List[Tuple[score_function_type, str
 
 def check_practice(row: Series, practice_name: str) -> Optional[int]:
     calif = None
-    try:
-        if valid_row(row, ['repo_site', 'repo_user', 'repo_name']):
+    if valid_row(row, ['repo_site', 'repo_user', 'repo_name']):
+        try:
             calif = row[practice_name]
-            if calif == -1:
-                calif = 1
-        else:
-            calif = 0
-    except KeyError:
-        pass
+        except KeyError:
+            pass
     return calif
 
 
-def valid_row(row: Series, required_values: List[str]) -> bool:
-    def check_column_value(column_value) -> bool:
-        return not np.isnan(column_value) \
-               and column_value is not None and column_value != ''
+def valid_row(row: Series, required_columns: List[str]) -> bool:
+    def check_column_value(column_value: Any) -> bool:
+        return column_value is not None and ((isinstance(column_value, float) and not np.isnan(column_value))
+                                             or column_value != '')
 
     return reduce(lambda x1, x2: x1 and x2,
-                  [check_column_value(row.get(column_value, None))
-                   for column_value in required_values], True)
+                  [check_column_value(row.get(column_name, None))
+                   for column_name in required_columns], True)
 
 
 def score_practice(practice_files: List[Tuple[score_function_type, str, PracticeFile]]) -> int:
@@ -86,22 +80,25 @@ def score_practice(practice_files: List[Tuple[score_function_type, str, Practice
     return max(scores, default=0)
 
 
-def get_practice_files(fn_get_file_info: Callable[[str], Dict],
-                       fn_get_commit_list_of_a_file: Callable[[str], List[Dict]],
+def get_practice_files(get_file_info: Callable[[str], Dict],
+                       get_commit_list_of_a_file: Callable[[str], List[Dict]],
+                       get_file_content: Callable[[str], bytes],
                        practice_aliases: List[str], practice_as_dir: bool) -> List[PracticeFile]:
     return [
-        search_practice_files_in_git(fn_get_file_info, fn_get_commit_list_of_a_file, practice_alias, practice_as_dir)
+        search_practice_files_in_git(get_file_info, get_commit_list_of_a_file,
+                                     get_file_content, practice_alias, practice_as_dir)
         for practice_alias in practice_aliases]
 
 
-def search_practice_files_in_git(fn_get_file_info: Callable[[str], Dict],
-                                 fn_get_commit_list_of_a_file: Callable[[str], List[Dict]],
+def search_practice_files_in_git(get_file_info: Callable[[str], Dict],
+                                 get_commit_list_of_a_file: Callable[[str], List[Dict]],
+                                 get_file_content: Callable[[str], bytes],
                                  practice_alias: str, practice_as_dir: bool) \
         -> PracticeFile:
-    file_description = search_in_repo_dir(fn_get_file_info, practice_alias, "", practice_as_dir)
+    file_description = search_in_repo_dir(get_file_info, practice_alias, "", practice_as_dir)
     file_name, file_date, file_path, file_raw, file_info = None, datetime(2010, 12, 31, 23, 59), None, None, []
     if file_description:
-        commit_list_of_file = fn_get_commit_list_of_a_file(file_description["path"])
+        commit_list_of_file = get_commit_list_of_a_file(file_description["path"])
         last_commit_index = len(commit_list_of_file) - 1
         if last_commit_index >= 0:
             upload_date = commit_list_of_file[last_commit_index]["commit"]["committer"]["date"]
@@ -109,12 +106,12 @@ def search_practice_files_in_git(fn_get_file_info: Callable[[str], Dict],
             file_path = file_description["path"]
             file_date = datetime.strptime(upload_date, "%Y-%m-%dT%H:%M:%SZ")
             if file_description["download_url"]:
-                file_raw = get_response_content(file_description["download_url"])
+                file_raw = get_file_content(file_description["download_url"])
                 file_info.append(file_description)
             else:
                 try:
                     file_info = [dict(name=file["name"], path=file["path"], download_url=file["download_url"]) for file
-                                 in fn_get_file_info(file_path)]
+                                 in get_file_info(file_path)]
                 except TypeError:
                     print("Error getting path {}".format(file_path))
         else:
@@ -174,7 +171,3 @@ def search_dir_in_repo_dir(fn_get_file_info_from_path: Callable[[str], Dict], pr
     return file_info_match
 
 
-def get_querier_with_credentials(config_path: str):
-    with open(config_path) as f:
-        my_data = json.load(f)
-    return get_querier(my_data["client_id"], my_data["client_secret"])
