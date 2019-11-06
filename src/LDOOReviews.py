@@ -1,12 +1,8 @@
-from typing import Callable, List
+from typing import  List
 
 from pandas import DataFrame, read_csv
 
-from LDOOPracticeScores import *
-from src.reviewer.PracticeReviewer import review_class_by_practice, practice_summary
-from Students import build_course_from_csv
-from GitHubQuerier import github_get_repository_list_by
-from src.reviewer.git_retrivers import review_class_by_practice, practice_summary, build_course_from_csv
+from src.reviewer.git_retrivers import  practice_summary, build_course_from_csv
 from src.reviewer.github_request_client import github_get_repository_list_by
 from src.reviewer.scores.LDOOPracticeScores import *
 

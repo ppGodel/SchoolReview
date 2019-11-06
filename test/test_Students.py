@@ -1,7 +1,3 @@
-from unittest import TestCase
-
-from Students import get_querier, build_student, build_course_from_csv
-from GitHubQuerier import github_get_repository_list_by
 import json
 from unittest import TestCase
 

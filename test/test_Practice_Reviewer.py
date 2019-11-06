@@ -12,9 +12,6 @@ from reviewer.scores.LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, 
 from reviewer.scores.LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, \
     ldoo_p9, ldoo_p10
 from utils.pandas import parse_csv_df
-from LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10
-from Students import get_querier
-from GitHubQuerier import github_get_commit_list_of_a_file, github_get_file_info, github_get_file
 
 
 def get_querier_with_credentials():
