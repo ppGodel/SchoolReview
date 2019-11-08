@@ -1,9 +1,8 @@
 import json
 from unittest import TestCase
 
-from reviewer.git_retrivers import build_student
-from src.reviewer.git_retrivers import build_course_from_csv, get_querier
-from src.reviewer.github_request_client import github_get_repository_list_by
+from reviewer.git_retrivers import build_student, build_course_from_csv, get_querier
+from reviewer.github_request_client import github_get_repository_list_by
 
 LDOO = 'LDOO'
 LBD = 'LBD'
@@ -40,9 +39,8 @@ class TestAlumno(TestCase):
         a = build_course_from_csv(querier(github_get_repository_list_by),
                                   "test/resources/students_ldoo.csv", ' direccion de tu repositorio GIT',
                                   base_columns, new_columns)
-        a.to_csv('test/resources/LDOO_repos.csv', sep=',', encoding='utf-8', index=False)
         self.assertIsNotNone(a)
-        # import pandas
+        # a.to_csv('test/resources/LDOO_repos.csv', sep=',', encoding='utf-8', index=False))
 
 
     def test_from_file_lbd(self):
@@ -52,5 +50,5 @@ class TestAlumno(TestCase):
         a = build_course_from_csv(querier(github_get_repository_list_by),
                                   "test/resources/practicas_lbd.csv", 'Repositorio',
                                   base_columns, new_columns)
-        a.to_csv('test/resources/LBD_repos.csv', sep=',', encoding='utf-8', index=False)
+        # a.to_csv('test/resources/LBD_repos.csv', sep=',', encoding='utf-8', index=False)
         self.assertIsNotNone(a)

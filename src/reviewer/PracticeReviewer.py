@@ -32,8 +32,12 @@ def _check_and_review_practice(get_practice_list: Callable[[Practice],
                                                            List[Tuple[score_function_type,
                                                                       str, PracticeFile]]],
                                row: Series, practice: Practice):
-    practice_list = get_practice_list(practice)
-    return check_and_review_practice(practice_list, row, practice)
+    actual_score = check_practice(row, practice.name)
+    if actual_score is None or np.isnan(actual_score) or actual_score < 10:
+        practice_list = get_practice_list(practice)
+        new_score = check_and_review_practice(practice_list, row, practice)
+
+    return actual_score
 
 
 def review_practice_from_df(df: DataFrame, fn_check_and_review_row: Callable[[Series], int]) \
@@ -43,9 +47,7 @@ def review_practice_from_df(df: DataFrame, fn_check_and_review_row: Callable[[Se
 
 def check_and_review_practice(practice_list: List[Tuple[score_function_type, str, PracticeFile]],
                               row: Series, practice: Practice) -> Optional[int]:
-    calif = check_practice(row, practice.name)
-    if calif is None or 0 < calif < 7:
-        calif = score_practice(practice_list)
+    calif = score_practice(practice_list)
     if not calif:
         calif = 0
     return calif

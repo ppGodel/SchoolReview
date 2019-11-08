@@ -51,22 +51,21 @@ def check_and_review_practice_from_git(fn_get_file_info: Callable[[str, str, str
     return _check_and_review_practice_from_git
 
 
-def review_class_by_practice(config_path: str, practice_info: Practice, csv_path: str,
-                             create_repo_calif_df: Callable[[Callable, str], DataFrame]):
-    print("Reviewing: {} at {}".format(practice_info.name, datetime.now()))
+def review_class_by_practice(config_path: str, practice_info: Practice, target_csv_path: str,
+                             base_csv_path: str,
+                             create_repo_calif_df: Callable[[Callable, str, str], DataFrame]):
     querier = get_querier_with_credentials(config_path)
     try:
-        df_lbd = parse_csv_df(csv_path)
+        df_lbd = parse_csv_df(target_csv_path)
     except FileNotFoundError:
-        df_lbd = create_repo_calif_df(querier, csv_path)
+        df_lbd = create_repo_calif_df(querier, base_csv_path, target_csv_path)
     practice_calif = review_practice_from_df_from_git(df_lbd, querier(github_get_file_info),
                                                       querier(github_get_commit_list_of_a_file),
                                                       get_response_content,
                                                       practice_info)
     df_lbd[practice_info.name] = practice_calif
-    df_lbd.to_csv(csv_path, sep=',', encoding='utf-8', index=False)
+    df_lbd.to_csv(target_csv_path, sep=',', encoding='utf-8', index=False)
     practice_summary(practice_calif)
-    print("Finish at {}".format(datetime.now()))
 
 
 class DFSaver(rx.core.Observer):

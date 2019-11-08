@@ -101,7 +101,7 @@ class TestTest(TestCase):
                                          lbd_pia)
         l = []
         obs.subscribe(lambda x: l.append(x))
-        self.assert_(l)
+        self.assertTrue(l[0]['PIA'].equals(Series(data=[10, 10, 10], name='PIA')))
         # df_lbd[lbd_p1.name] = p1
         # df_lbd.to_csv("test/resources/LBD_repos.csv")
 
