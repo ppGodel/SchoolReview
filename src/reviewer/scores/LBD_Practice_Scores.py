@@ -215,7 +215,7 @@ def score_pia_lbd(end_date: datetime, start_date: datetime, limit_date: datetime
         score = score + score_file(practice_name, file)
     return score
 
-lbd_min_review = partial(score_practice_lbd, end_date=datetime(2019, 11, 8, 23, 59),
+lbd_min_review = partial(score_practice_lbd, end_date=datetime(2019, 11, 11, 23, 59),
                          score_file=(lambda x, y: 7))
 
 lbd_pia_min_review = partial(score_pia_lbd, end_date=datetime(2019, 11, 8, 23, 59),
@@ -249,20 +249,20 @@ def get_score_function_for_pia(pia_begin_date: datetime) -> \
                    limit_date=pia_begin_date + two_weeks)
 
 
-lbd_p1 = Practice("Practica1", [p1_re], False, get_score_function_for_practice(first_class))
+lbd_p1 = Practice("Practica1", [p1_re], True, get_score_function_for_practice(first_class))
 second_class = first_class + one_week
-lbd_p2 = Practice("Practica2", [p2_re], False, get_score_function_for_practice(second_class))
+lbd_p2 = Practice("Practica2", [p2_re], True, get_score_function_for_practice(second_class))
 third_class = second_class + one_week
-lbd_p3 = Practice("Practica3", [p3_re], False, get_score_function_for_practice(third_class))
+lbd_p3 = Practice("Practica3", [p3_re], True, get_score_function_for_practice(third_class))
 fourth_class = third_class + one_week
-lbd_p4 = Practice("Practica4", [p4_re], False, get_score_function_for_practice(fourth_class))
+lbd_p4 = Practice("Practica4", [p4_re], True, get_score_function_for_practice(fourth_class))
 fifth_class = fourth_class + two_weeks
-lbd_p5 = Practice("Practica5", [p5_re], False, get_score_function_for_practice(fifth_class))
+lbd_p5 = Practice("Practica5", [p5_re], True, get_score_function_for_practice(fifth_class))
 sixth_class = fifth_class + one_week
-lbd_p6 = Practice("Practica6", [p6_re], False, get_score_function_for_practice(sixth_class))
+lbd_p6 = Practice("Practica6", [p6_re], True, get_score_function_for_practice(sixth_class))
 seventh_class = sixth_class + one_week
-lbd_p7 = Practice("Practica7", [p7_re], False, get_score_function_for_practice(seventh_class))
+lbd_p7 = Practice("Practica7", [p7_re], True, get_score_function_for_practice(seventh_class))
 eighth_class = seventh_class + one_week
-lbd_p8 = Practice("Practica8", [p8_re], False, get_score_function_for_practice(eighth_class))
+lbd_p8 = Practice("Practica8", [p8_re], True, get_score_function_for_practice(eighth_class))
 pia_class = eighth_class + one_week
-lbd_pia = Practice("PIA", [pia_re], False, get_score_function_for_pia(pia_class))
+lbd_pia = Practice("PIA", [pia_re], True, get_score_function_for_pia(pia_class))

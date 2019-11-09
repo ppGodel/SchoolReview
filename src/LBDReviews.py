@@ -46,7 +46,7 @@ class_info_csv = "../Classes/LBD_AD_19.csv"
 target_csv = "../Classes/LBD_AD_19_calif.csv"
 upload_csv = "../Classes/LBD_AD_19_upload.csv"
 
-# evaluate_class(practices, credentials, target_csv, class_info_csv)
+evaluate_class(practices, credentials, target_csv, class_info_csv)
 create_file_for_upload(read_csv, target_csv, upload_csv)
 
 

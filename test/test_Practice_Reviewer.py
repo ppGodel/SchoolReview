@@ -5,17 +5,19 @@ from unittest import TestCase
 from pandas import Series, DataFrame
 
 from reviewer.PracticeReviewer import review_practice_from_df, check_and_review_practice
-from reviewer.git_retrivers import rx_review_practice_from_df, get_querier
+from reviewer.git_retrivers import rx_review_practice_from_df, get_querier, \
+    check_and_review_practice_from_git
 from reviewer.github_request_client import github_get_commit_list_of_a_file, github_get_file_info, github_get_file
 from reviewer.scores.LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
     lbd_pia
 from reviewer.scores.LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, \
     ldoo_p9, ldoo_p10
 from utils.pandas import parse_csv_df
+from utils.url import get_response_content
 
 
 def get_querier_with_credentials():
-    with open('test/resources/my_data.json') as f:
+    with open('../test/resources/my_data.json') as f:
         my_data = json.load(f)
     return get_querier(my_data["client_id"], my_data["client_secret"])
 
@@ -108,26 +110,33 @@ class TestTest(TestCase):
 
     def test_review_ldb(self):
         querier = get_querier_with_credentials()
-        student_row = Series(
-            {"Matricula": "1752659", "repo_site": "github.com", "repo_user": "AlonsoBarrientosLSTI",
-             "repo_name": "LBD-"})
+        # student_row = Series(
+        #     {"Matricula": "1941554", "repo_site": "github.com", "repo_user": "RogueWhite",
+        #      "repo_name": "LBD"})
+        student_row = Series(data=["1941554","github.com", "RogueWhite", "LBD"],
+                             index=["Matricula", "repo_site", "repo_user", "repo_name"])
         practices = [lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, lbd_pia]
 
         for practice in practices:
-            calif = check_and_review_practice(querier(github_get_file_info),
-                                              querier(github_get_commit_list_of_a_file),
-                                              student_row, practice)
-            print("{}: {}".format( practice.name,calif))
+            check_and_review_practice_from_row = check_and_review_practice_from_git(
+                querier(github_get_file_info), querier(github_get_commit_list_of_a_file),
+                get_response_content, practice)
+            calif = check_and_review_practice_from_row(student_row)
+            print("{}: {}".format(practice.name, calif))
 
     def test_review_pia_ldb(self):
         querier = get_querier_with_credentials()
-        student_row = Series(
-            {"Matricula": "1752659", "repo_site": "github.com", "repo_user": "AlonsoBarrientosLSTI",
-             "repo_name": "LBD-"})
+        # student_row = Series(
+        #     {"Matricula": "1941554", "repo_site": "github.com", "repo_user": "RogueWhite",
+        #      "repo_name": "LBD"}),
+        student_row = Series(data=["1941554","github.com", "RogueWhite", "LBD"],
+            index=["Matricula", "repo_site", "repo_user", "repo_name"])
 
-        calif = check_and_review_practice(querier(github_get_file_info),
-                                          querier(github_get_commit_list_of_a_file),
-                                          student_row, lbd_pia)
+        check_and_review_practice_from_row = check_and_review_practice_from_git(
+            querier(github_get_file_info), querier(github_get_commit_list_of_a_file),
+            get_response_content, practice)
+
+        calif = check_and_review_practice_from_row(student_row)
         print(calif)
 
     def test_review_ldoo(self):
