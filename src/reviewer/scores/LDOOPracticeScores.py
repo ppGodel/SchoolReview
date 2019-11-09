@@ -23,7 +23,7 @@ ldoo_min_review = partial(score_min_practice_ldoo, end_date=datetime(2019, 11, 9
 
 first_class = datetime(2019, 8, 23, 0, 0)
 one_week = timedelta(days=7)
-two_weeks = timedelta(days=14)
+two_weeks = timedelta(days=15)
 ldoo_p1 = Practice("Practica1", [p1_re], True, partial(ldoo_min_review,
                                                        start_date=first_class,
                                                        limit_date=first_class + two_weeks))

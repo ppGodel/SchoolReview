@@ -1,7 +1,5 @@
 from typing import  List
-
 from pandas import DataFrame, read_csv
-
 from src.reviewer.git_retrivers import practice_summary, build_course_from_csv, \
     review_class_by_practice
 from src.reviewer.github_request_client import github_get_repository_list_by

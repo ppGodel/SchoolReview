@@ -32,12 +32,16 @@ def _check_and_review_practice(get_practice_list: Callable[[Practice],
                                                            List[Tuple[score_function_type,
                                                                       str, PracticeFile]]],
                                row: Series, practice: Practice):
-    actual_score = check_practice(row, practice.name)
-    if actual_score is None or np.isnan(actual_score) or actual_score < 10:
+    try:
+        actual_score = check_practice(row, practice.name)
+    except IndexError:
+        print(f"Invalid row, skipped {row.name}")
+        return 0
+    new_score = 0
+    if actual_score < 8:
         practice_list = get_practice_list(practice)
         new_score = check_and_review_practice(practice_list, row, practice)
-
-    return actual_score
+    return max([new_score, actual_score])
 
 
 def review_practice_from_df(df: DataFrame, fn_check_and_review_row: Callable[[Series], int]) \
@@ -60,13 +64,16 @@ def check_practice(row: Series, practice_name: str) -> Optional[int]:
             calif = row[practice_name]
         except KeyError:
             pass
+    else:
+        raise IndexError
+    calif = 0 if calif is None or np.isnan(calif) else calif
     return calif
 
 
 def valid_row(row: Series, required_columns: List[str]) -> bool:
     def check_column_value(column_value: Any) -> bool:
-        return column_value is not None and ((isinstance(column_value, float) and not np.isnan(column_value))
-                                             or column_value != '')
+        return column_value is not None and isinstance(column_value, str) and column_value != '' \
+               and column_value == column_value
 
     return reduce(lambda x1, x2: x1 and x2,
                   [check_column_value(row.get(column_name, None))
@@ -102,7 +109,10 @@ def search_practice_files_in_git(get_file_info: Callable[[str], Dict],
         commit_list_of_file = get_commit_list_of_a_file(file_description["path"])
         last_commit_index = len(commit_list_of_file) - 1
         if last_commit_index >= 0:
-            upload_date = commit_list_of_file[last_commit_index]["commit"]["committer"]["date"]
+            try:
+                upload_date = commit_list_of_file[last_commit_index]["commit"]["committer"]["date"]
+            except KeyError:
+                upload_date = datetime.now()
             file_name = file_description["name"]
             file_path = file_description["path"]
             file_date = datetime.strptime(upload_date, "%Y-%m-%dT%H:%M:%SZ")
