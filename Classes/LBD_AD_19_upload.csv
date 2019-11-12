@@ -28,8 +28,8 @@ Matricula,Grupo,Practica1,Practica2,Practica3,Practica4,Practica5,Practica6,Prac
 6450,Sabado 8 a 10 am,7,10,10,10,10,10,7,10,20,94
 8345,Sabado de 12 a 2 pm,0,0,0,0,0,0,0,0,0,0
 8371,Sabado de 12 a 2 pm,10,10,10,10,10,10,10,10,20,100
-5449,Sabado de 12 a 2 pm,10,10,10,10,10,7,0,0,0,57
-7367,Sabado de 12 a 2 pm,10,10,10,10,0,7,0,0,0,47
+5449,Sabado de 12 a 2 pm,10,10,10,10,10,7,7,7,0,71
+7367,Sabado de 12 a 2 pm,10,10,10,10,7,7,7,7,14,82
 8192,Sabado de 12 a 2 pm,10,10,10,10,10,10,10,10,0,80
 0945,Sabado de 12 a 2 pm,10,10,10,10,10,0,10,10,0,70
 5080,Sabado de 12 a 2 pm,10,10,10,10,7,7,7,10,20,91
@@ -40,7 +40,7 @@ Matricula,Grupo,Practica1,Practica2,Practica3,Practica4,Practica5,Practica6,Prac
 6022,Sabado de 2 a 4 pm,10,10,10,10,10,7,7,10,20,94
 5760,Sabado de 2 a 4 pm,10,10,10,10,10,10,10,10,20,100
 5240,Sabado de 2 a 4 pm,10,10,7,10,10,10,7,10,20,94
-8301,Sabado de 2 a 4 pm,10,7,7,10,10,7,0,0,0,51
+8301,Sabado de 2 a 4 pm,10,7,7,10,10,7,7,7,0,65
 1747,Sabado de 2 a 4 pm,10,10,10,10,10,10,10,10,14,94
 6765,Sabado de 2 a 4 pm,10,0,0,10,0,0,0,0,0,20
 7910,Sabado de 2 a 4 pm,10,0,10,10,10,7,7,10,20,84
@@ -52,5 +52,5 @@ Matricula,Grupo,Practica1,Practica2,Practica3,Practica4,Practica5,Practica6,Prac
 8085,Sabado de 2 a 4 pm,10,10,10,7,10,7,7,7,20,88
 2958,Sabado de 2 a 4 pm,7,7,7,10,10,10,10,7,20,88
 3771,Sabado de 2 a 4 pm,10,10,10,10,10,10,10,10,20,100
-0433,Sabado de 2 a 4 pm,10,7,7,7,10,7,0,0,20,68
+0433,Sabado de 2 a 4 pm,10,7,7,7,10,7,7,7,20,82
 0411,Sabado de 2 a 4 pm,0,0,0,0,0,0,0,0,0,0

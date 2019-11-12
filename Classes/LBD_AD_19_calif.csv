@@ -20,7 +20,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1795696,Milton,Hinojosa,Castro,Sabado 8 a 10 am,github.com,MiltonHinojosa00,Lab-Base-de-Datos,0,10,10,10,7,10,10,10,20,87
 1851111,Samanta Michel,Medina,Guevara,Sabado 8 a 10 am,github.com,samanta-medina,LBD,10,10,7,10,7,7,7,10,20,88
 1851232,Gerardo Uriel,Ochoa,Lopez,Sabado 8 a 10 am,github.com,GerardoOchoa229,LBD_1851232,10,10,10,10,7,7,10,10,20,94
-1669783,abraham,rojas,cruz,Sabado 8 a 10 am,github.com,abraham254,practica1,10,7,7,7,7,0,0,0,14,52
+1669783,abraham,rojas,cruz,Sabado 8 a 10 am,github.com,abraham254,practica1,10,7,7,7,7,7,7,7,14,73
 1795860,Paola,Salazar,Rodríguez,Sabado 8 a 10 am,github.com,PaolaSalazar09,LabBD,10,10,10,10,10,7,7,10,20,94
 1741559,Jose Luis,Serrano,Trinidad,Sabado 8 a 10 am,github.com,SerranoTrinidad,LBD,7,7,0,0,0,0,0,0,0,14
 1815809,Myriam Daniela,Treviño,Abad,Sabado 8 a 10 am,github.com,Myriam0213,LBD,10,10,10,10,10,7,7,10,20,94
@@ -28,7 +28,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1726450,Israel,Vieyra,Limones,Sabado 8 a 10 am,github.com,ilimones,Lab-Base-de-Datos,7,10,10,10,10,10,7,10,20,94
 1748345,Fernando,Aguilar,Saucedo,Sabado de 12 a 2 pm,github.com,FernandoAS1011,LBD-2019,0,0,0,0,0,0,0,0,0,0
 1728371,Juan Carlos,Buentello,Cruz,Sabado de 12 a 2 pm,github.com,juanbuentello,LabBasedeDatos,10,10,10,10,10,10,10,10,20,100
-1735449,Román Alejandro,Gallegos,Márquez,Sabado de 12 a 2 pm,github.com,RomanGallegos,LAB.BASE-DE-DATOS_1735449,10,10,10,10,10,7,0,0,0,57
+1735449,Román Alejandro,Gallegos,Márquez,Sabado de 12 a 2 pm,github.com,RomanGallegos,LAB.BASE-DE-DATOS_1735449,10,10,10,10,10,7,7,7,0,71
 1747367,Diego,Ghio,Ramirez,Sabado de 12 a 2 pm,github.com,DiegoGhio,Lab-Base,10,10,10,10,7,7,7,7,14,82
 1818192,Luis Mauricio,Gracia ,Valdez,Sabado de 12 a 2 pm,github.com,GarVal2000,LBDD,10,10,10,10,10,10,10,10,0,80
 1810945,Sergio Javier,Lona,Betancourt,Sabado de 12 a 2 pm,github.com,Serjaxx,LBDSabado12-2,10,10,10,10,10,0,10,10,0,70
@@ -40,7 +40,7 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1856022,José de Jesús,Araujo,Cerda,Sabado de 2 a 4 pm,github.com,JoseAraujo10,LBD,10,10,10,10,10,7,7,10,20,94
 1585760,Michelle Montserrat,Cisneros,Alvarado,Sabado de 2 a 4 pm,github.com,michellemfcfm,LaboratorioBaseDeDatos,10,10,10,10,10,10,10,10,20,100
 1795240,Daniel Alejandro,Cruz,Polo,Sabado de 2 a 4 pm,github.com,Dani0460,LBD,10,10,7,10,10,10,7,10,20,94
-1818301,Gustavo,De Leon,Marroquin,Sabado de 2 a 4 pm,github.com,GustavoDleon,LAB-BASE-DE-DATOS,10,7,7,10,10,7,0,0,0,51
+1818301,Gustavo,De Leon,Marroquin,Sabado de 2 a 4 pm,github.com,GustavoDleon,LAB-BASE-DE-DATOS,10,7,7,10,10,7,7,7,0,65
 1811747,Edelmiro Alberto,Escamilla,Magaña,Sabado de 2 a 4 pm,github.com,MiroX3600,El-Pica-LapisLazuli,10,10,10,10,10,10,10,10,14,94
 1806765,Iván Del Angel,García,Pérez,Sabado de 2 a 4 pm,github.com,ivaangrc,LBD2019,10,0,0,10,0,0,0,0,0,20
 1937910,Eduardo,Garza,Cantu,Sabado de 2 a 4 pm,github.com,LaloGarzaCantu,LBD2019,10,0,10,10,10,7,7,10,20,84
@@ -52,5 +52,5 @@ Matricula,Nombre,Primer apellido,Segundo apellido,Grupo,repo_site,repo_user,repo
 1848085,Valeria,Mendoza,Castillo,Sabado de 2 a 4 pm,github.com,valeriamdza,LBD,10,10,10,7,10,7,7,7,20,88
 1842958,Sergio Alejandro,Monsivais,Torres,Sabado de 2 a 4 pm,github.com,Samt118,LBD,7,7,7,10,10,10,10,7,20,88
 1813771,Nelson Eduardo,Morales,Rodriguez,Sabado de 2 a 4 pm,github.com,lalomorales99,LabDatabases,10,10,10,10,10,10,10,10,20,100
-1810433,Edwin javier ,Morin,Ortiz,Sabado de 2 a 4 pm,github.com,JMorin000,DB,10,7,7,7,10,7,0,0,20,68
+1810433,Edwin javier ,Morin,Ortiz,Sabado de 2 a 4 pm,github.com,JMorin000,DB,10,7,7,7,10,7,7,7,20,82
 1560411,Daniel,Rodriguez,Acuña ,Sabado de 2 a 4 pm,github.com,dannyrdz95,practica1,0,0,0,0,0,0,0,0,0,0
