@@ -1,10 +1,11 @@
-from typing import  List
+from typing import List, Callable
 from pandas import DataFrame, read_csv
-
+from datetime import datetime
 from src.reviewer.git_retrivers import practice_summary, build_course_from_csv, \
     review_class_by_practice
 from src.reviewer.github_request_client import github_get_repository_list_by
-from src.reviewer.scores.LDOOPracticeScores import *
+from src.reviewer.scores.LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, \
+    ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10
 
 
 def create_repo_calif(querier: Callable, base_csv_path: str, target_csv_path: str) -> DataFrame:
@@ -18,7 +19,8 @@ def create_repo_calif(querier: Callable, base_csv_path: str, target_csv_path: st
     return df_lbd
 
 
-def create_file_for_upload(get_df: Callable[[str], DataFrame],target_csv_path: str, upload_csv_path: str):
+def create_file_for_upload(get_df: Callable[[str], DataFrame], target_csv_path: str,
+                           upload_csv_path: str):
     results_df = get_df(target_csv_path)
     base_column_names = ["Matricula", "Grupo", "Practica1", "Practica2", "Practica3", "Practica4",
                          "Practica5", "Practica6", "Practica7", "Practica8", "Practica9",
@@ -49,5 +51,8 @@ target_csv = "../Classes/LDOO_AD_19_calif.csv"
 credentials = '../test/resources/my_data.json'
 upload_csv = "../Classes/LDOO_AD_19_upload.csv"
 
-evaluate_class(practices, credentials, target_csv, class_info_csv)
-create_file_for_upload(read_csv, target_csv, upload_csv)
+if __name__ == '__main__':
+    print('OK')
+    # evaluate_class(practices, credentials, target_csv, class_info_csv)
+    # create_file_for_upload(read_csv, target_csv, upload_csv)
+    print(class_info_csv)

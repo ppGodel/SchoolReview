@@ -1,4 +1,3 @@
-import datetime
 import re
 from dataclasses import dataclass
 from datetime import datetime
@@ -23,7 +22,8 @@ score_function_type = Callable[[str, PracticeFile], int]
 @dataclass
 class Practice:
     name: str
-    aliases: List[str]
+    practice_aliases: List[str]
+    file_aliases: List[str]
     as_dir: bool
     score_function: score_function_type
 

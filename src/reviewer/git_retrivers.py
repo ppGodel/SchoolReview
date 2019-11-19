@@ -1,4 +1,3 @@
-import datetime
 import json
 from functools import partial
 from typing import Callable, Dict, List, Tuple
@@ -8,13 +7,14 @@ import rx
 from pandas import DataFrame, Series
 from rx import operators as op
 
-from Students import LBD, Student
-from reviewer.PracticeReviewer import Practice, review_practice_from_df, \
+from src.Students import LBD, Student
+from src.reviewer.PracticeReviewer import Practice, review_practice_from_df, \
     score_function_type, PracticeFile, get_practice_files, _check_and_review_practice
-from reviewer.github_request_client import github_get_commit_list_of_a_file, github_get_file_info
-from utils import reactive
-from utils.pandas import parse_csv_df
-from utils.url import remove_protocol_from_url, get_response_content
+from src.reviewer.github_request_client import github_get_commit_list_of_a_file, \
+    github_get_file_info
+from src.utils import reactive
+from src.utils.pandas import parse_csv_df
+from src.utils.url import remove_protocol_from_url, get_response_content
 
 
 def review_practice_from_df_from_git(df: DataFrame, fn_get_file_info: Callable[[str], Dict],

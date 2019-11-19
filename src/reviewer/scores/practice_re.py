@@ -36,7 +36,8 @@ pia_re = r"{}{}".format(pia_possible_names_re, lbd_end_files)
 
 
 p2e_re = r"{}{}{}{}".format(practice_possible_names_re, any_separation_re, dos_re, lbd_end_files)
-p3e_re = r"{}{}{}{}".format(practice_possible_names_re, any_separation_re, tres_re, images_end_files)
+p3e_re = r"{}{}{}{}".format(practice_possible_names_re, any_separation_re, tres_re,
+                            images_end_files)
 p4e_re = r"{}{}{}{}".format(practice_possible_names_re, any_separation_re, cuatro_re, lbd_end_files)
 p5e_re = r"{}{}{}{}".format(practice_possible_names_re, any_separation_re, cinco_re, lbd_end_files)
 p6e_re = r"{}{}{}{}".format(practice_possible_names_re, any_separation_re, seis_re, lbd_end_files)
