@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 from pandas import DataFrame, read_csv, concat
-from functools import partial
 from src.functor import functor
 from typing import Callable, Dict, Any
 
@@ -9,11 +8,15 @@ def get_dataframe(get_fn: Callable[[str], DataFrame], filename: str) -> DataFram
     return get_fn(filename)
 
 
-def get_dataframe_from_csv(filename: str, sep: str = ',') -> DataFrame:
-    return get_dataframe(partial(read_csv, sep=sep), filename)
+def get_dataframe_from_csv(filename: str) -> DataFrame:
+    def _read_csv(filename: str):
+        return read_csv(filename, sep=',')
+    return get_dataframe(_read_csv, filename)
 
 
 def save_dataframe_to_csv(df: DataFrame, path_to_save: str) -> None:
+    print(path_to_save)
+    print(df)
     df.to_csv(path_to_save, sep=',', encoding='utf-8', index=False)
 
 
@@ -48,7 +51,8 @@ def lazy_load_xform_save_csv(load_fn: Callable[[str], DataFrame],
         map(xform_fn).\
         map(save_fn)
 
-def test():
+
+def test_xform():
     def create_test_df(mock_file_source: str) -> DataFrame:
         return DataFrame([
             {'Matricula': 1111111, 'Nombre': 'A1', 'Final': 10},
@@ -76,18 +80,26 @@ def test():
 
 
 if __name__ == '__main__':
+    def read_csv_remove_char_matricula_save_csv(source_file: str,
+                                                sink_file: str,
+                                                xform_col:str,
+                                                final_columns:str):
+        def show_last_4_digits_from_matricula(df: DataFrame) -> DataFrame:
+            return show_last_n_digits_of_column(df, xform_col, 4)
 
-    def print_df_as_csv(df: DataFrame) -> None:
-        print(df)
+        def save_upload_dataframe_as_csv(df: DataFrame) -> None:
+            return save_dataframe_to_csv(df, sink_file)
 
-    def show_last_4_digits_from_matricula(df: DataFrame) -> DataFrame:
-        return show_last_n_digits_of_column(df, 'Matricula', 4)
+        def choose_columns(df: DataFrame) -> DataFrame:
+            col_list = final_columns.split(',',-1)
+            return DataFrame(df.loc[:,col_list], columns=col_list)
 
-    def save_upload_dataframe_as_csv(df: DataFrame) -> None:
-        return save_dataframe_to_csv(df, 'upload_file.csv')
+        functor_read_df_modify_mat_save_csv =  \
+            lazy_load_xform_save_csv(get_dataframe_from_csv,
+                                     save_upload_dataframe_as_csv,
+                                     functor(show_last_4_digits_from_matricula).map(choose_columns))
+        functor_read_df_modify_mat_save_csv(source_file)
 
-    functor_read_df_modify_mat_save_csv =  \
-        lazy_load_xform_save_csv(get_dataframe_from_csv,
-                                 save_upload_dataframe_as_csv,
-                                 show_last_4_digits_from_matricula)
-    functor_read_df_modify_mat_save_csv('file.csv')
+    import sys
+
+    read_csv_remove_char_matricula_save_csv(str(sys.argv[1]), str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
