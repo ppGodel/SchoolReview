@@ -55,13 +55,12 @@ function fillrow(studentsDict, row){
     var sid = row.getElementsByTagName("td")[1].innerText
     var calif = 50;
     if(sid in studentsDict){
-	    calif = studentsDict[sid]["Total"];
-	    if(calif < 55){
-	    calif = 55
-	    }
+	    calif = Math.round(studentsDict[sid]["Total"]);
+	    calif = max(calif,55)
 	    if(calif > 65 && calif < 70){
             calif = 65
-        }
+      }
+      calif = min(calif, 100)
     }
     row.getElementsByTagName("td")[4].getElementsByTagName("input")[0].value = calif;
 }

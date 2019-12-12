@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pandas import DataFrame, read_csv, concat
-from src.functor import functor
-from typing import Callable, Dict, Any
+from functional_tools.functor import functor
+from typing import Callable, Dict, Any, Optional
 
 
 def get_dataframe(get_fn: Callable[[str], DataFrame], filename: str) -> DataFrame:
@@ -78,6 +78,9 @@ def test_xform():
                                  show_last_4_digits_from_matricula)
     functor_read_df_modify_mat_save_csv('now do your work')
 
+def parameter_to_str(parameter: Optional[Any]) -> str:
+    return str(parameter) if parameter is not None else ""
+
 
 if __name__ == '__main__':
     def read_csv_remove_char_matricula_save_csv(source_file: str,
@@ -102,4 +105,9 @@ if __name__ == '__main__':
 
     import sys
 
-    read_csv_remove_char_matricula_save_csv(str(sys.argv[1]), str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+    options = { True: lambda args: read_csv_remove_char_matricula_save_csv(
+        parameter_to_str(args[1]), parameter_to_str(args[2]),
+        parameter_to_str(args[3]), parameter_to_str(args[4])),
+                False: lambda _: test_xform()}
+    action = options[len(sys.argv) > 1]
+    action(sys.argv)
