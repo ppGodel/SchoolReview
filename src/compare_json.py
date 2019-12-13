@@ -24,28 +24,26 @@ def get_dict_from_file(file_name: str) -> Dict:
         data = json.load(json_file)
     return data
 
-def compare_dicts(base_dicts: List[str], dicts_for_compare: List[str]) -> None:
+def compare_dicts(base_dicts: List[str], dicts_for_compare: List[str]) -> bool:
     d_1 = get_functor_dict(base_dicts, get_dict_from_file)()
     d_2 = get_functor_dict(dicts_for_compare, get_dict_from_file)()
-    assert d_1 == d_2
-    print("Dicts are identical")
+    return d_1 == d_2
 
-def test_dicts() -> None:
+def test_dicts() -> bool:
     base_df = ["path1", "path2", "path3"]
     expected = {'path1': 'path1', 'path2': 'path2', 'path3': 'path3'}
     functor_dict = get_functor_dict(base_df, create_base_df)
     d_1 = functor_dict() # executing the code :D
-    assert d_1 == expected
-    print('Tests ok')
+    return d_1 == expected
 
 def parameter_to_str(parameter: Optional[Any]) -> str:
     return str(parameter) if parameter is not None else ""
 
-def call_compare(args: List[str]) -> None:
-    compare_dicts(parameter_to_str(args[1]).split(","), parameter_to_str(args[2]).split(","))
+def call_compare(args: List[str]) -> bool:
+    return compare_dicts(parameter_to_str(args[1]).split(","), parameter_to_str(args[2]).split(","))
 
-def call_test(_: List[str]) -> None:
-    test_dicts()
+def call_test(_: List[str]) -> bool:
+    return test_dicts()
 
 if __name__ == '__main__':
 
@@ -54,4 +52,5 @@ if __name__ == '__main__':
     options = {True: call_compare,
                False: call_test}
     action = options[len(sys.argv) > 1]
-    action(sys.argv)
+    assert action(sys.argv)
+    print("Dicts are identical")
