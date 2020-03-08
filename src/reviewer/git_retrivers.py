@@ -5,19 +5,18 @@ from typing import Callable, Dict, List, Tuple
 import pandas as pd
 import rx
 from pandas import DataFrame, Series
-from rx import operators as op
-
+from rx import operators as op, from_
 from src.Students import LBD, Student
 from src.reviewer.PracticeReviewer import Practice, review_practice_from_df, \
     score_function_type, PracticeFile, get_practice_files, _check_and_review_practice
 from src.reviewer.github_request_client import github_get_commit_list_of_a_file, \
     github_get_file_info
-from src.utils import reactive
 from src.utils.pandas import parse_csv_df
 from src.utils.url import remove_protocol_from_url, get_response_content
 
 
-def review_practice_from_df_from_git(df: DataFrame, fn_get_file_info: Callable[[str], Dict],
+def review_practice_from_df_from_git(df: DataFrame,
+                                     fn_get_file_info: Callable[[str], Dict],
                                      fn_get_commit_list_of_a_file: Callable[[str], List[Dict]],
                                      get_file_content: Callable[[str], bytes],
                                      practice: Practice) -> Series:
@@ -29,11 +28,10 @@ def review_practice_from_df_from_git(df: DataFrame, fn_get_file_info: Callable[[
 def get_practice_file_from_git(get_file_info: Callable[[str], Dict],
                                get_commit_list_of_a_file: Callable[[str], List[Dict]],
                                get_file_content: Callable[[str], bytes], practice: Practice) \
-        -> List[Tuple[score_function_type,
-                                                                 str, PracticeFile]]:
+        -> List[Tuple[score_function_type, str, PracticeFile]]:
     return [(practice.score_function, practice.name, practice_file_info) for practice_file_info in
             get_practice_files(get_file_info, get_commit_list_of_a_file, get_file_content,
-                               practice.aliases, practice.as_dir) if practice_file_info]
+                               practice.practice_aliases, practice.as_dir) if practice_file_info]
 
 
 def check_and_review_practice_from_git(fn_get_file_info: Callable[[str, str, str], Dict],
@@ -90,7 +88,7 @@ def rx_review_practice_from_df(df: DataFrame, fn_get_file_info: Callable[[str, s
                   op.map(practice_reviewer),
                   op.to_list(),
                   op.map(lambda results: {practice.name: Series(results)})]
-    return reactive.iter_to_observable(df.iterrows()).pipe(*operations)
+    return from_(df.iterrows()).pipe(*operations)
 
 
 def practice_summary(practice_calif: Series):

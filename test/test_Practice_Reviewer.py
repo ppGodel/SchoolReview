@@ -6,7 +6,7 @@ from pandas import Series, DataFrame
 
 from src.reviewer.PracticeReviewer import review_practice_from_df, check_and_review_practice
 from src.reviewer.git_retrivers import rx_review_practice_from_df, get_querier, \
-    check_and_review_practice_from_git
+    check_and_review_practice_from_git, review_practice_from_df_from_git
 from src.reviewer.github_request_client import github_get_commit_list_of_a_file, github_get_file_info, github_get_file
 from src.reviewer.scores.LBD_Practice_Scores import lbd_p1, lbd_p2, lbd_p3, lbd_p4, lbd_p5, lbd_p6, lbd_p7, lbd_p8, \
     lbd_pia
@@ -17,7 +17,7 @@ from src.utils.url import get_response_content
 
 
 def get_querier_with_credentials():
-    with open('../test/resources/my_data.json') as f:
+    with open('./test/resources/my_data.json') as f:
         my_data = json.load(f)
     return get_querier(my_data["client_id"], my_data["client_secret"])
 
@@ -65,11 +65,12 @@ class TestTest(TestCase):
     def test_review_group_ldb(self):
         querier = get_querier_with_credentials()
         df_lbd = parse_csv_df("test/resources/LBD_repos.csv")
-        p1 = review_practice_from_df(df_lbd, querier(github_get_file_info),
-                                     querier(github_get_commit_list_of_a_file),
-                                     lbd_pia)
+        p1 = review_practice_from_df_from_git(df_lbd, querier(github_get_file_info),
+                                              querier(github_get_commit_list_of_a_file),
+                                              get_response_content,
+                                              lbd_pia)
         df_lbd[lbd_p1.name] = p1
-        df_lbd.to_csv("test/resources/LBD_repos.csv")
+        # df_lbd.to_csv("test/resources/LBD_repos.csv")
 
     def test_review_group_lbd_rx(self):
         def get_dict_to_test() -> DataFrame:
