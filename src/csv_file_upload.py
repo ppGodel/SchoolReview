@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pandas import DataFrame, read_csv, concat
-from src.functor import functor
-from typing import Callable, Dict, Any
+from functional_tools.functor import functor
+from typing import Callable, Dict, Any, Optional
 
 
 def get_dataframe(get_fn: Callable[[str], DataFrame], filename: str) -> DataFrame:
@@ -45,8 +45,8 @@ def show_last_n_digits_of_column(base_df: DataFrame, column_name: str, digits: i
 
 
 def lazy_load_xform_save_csv(load_fn: Callable[[str], DataFrame],
-                             save_fn: Callable[[DataFrame], None],
-                             xform_fn: Callable[[DataFrame], DataFrame]) -> functor:
+                             xform_fn: Callable[[DataFrame], DataFrame],
+                             save_fn: Callable[[DataFrame], None]) -> functor:
     return functor(load_fn).\
         map(xform_fn).\
         map(save_fn)
@@ -74,32 +74,44 @@ def test_xform():
 
     functor_read_df_modify_mat_save_csv =  \
         lazy_load_xform_save_csv(create_test_df,
-                                 assert_result,
-                                 show_last_4_digits_from_matricula)
+                                 show_last_4_digits_from_matricula,
+                                 assert_result)
     functor_read_df_modify_mat_save_csv('now do your work')
 
 
+def parameter_to_str(parameter: Optional[Any]) -> str:
+    return str(parameter) if parameter is not None else ""
+
+
+def read_csv_remove_char_matricula_save_csv(source_file: str,
+                                            sink_file: str,
+                                            xform_col: str,
+                                            final_columns: str):
+    def show_last_4_digits_from_matricula(df: DataFrame) -> DataFrame:
+        return show_last_n_digits_of_column(df, xform_col, 4)
+
+    def save_upload_dataframe_as_csv(df: DataFrame) -> None:
+        return save_dataframe_to_csv(df, sink_file)
+
+    def choose_columns(df: DataFrame) -> DataFrame:
+        col_list = final_columns.split(',', -1)
+        return DataFrame(df.loc[:,col_list], columns=col_list)
+
+    functor_read_df_modify_mat_save_csv = \
+        lazy_load_xform_save_csv(get_dataframe_from_csv,
+                                 functor(show_last_4_digits_from_matricula)
+                                 .map(choose_columns),
+                                 save_upload_dataframe_as_csv)
+    functor_read_df_modify_mat_save_csv(source_file)
+
+
 if __name__ == '__main__':
-    def read_csv_remove_char_matricula_save_csv(source_file: str,
-                                                sink_file: str,
-                                                xform_col:str,
-                                                final_columns:str):
-        def show_last_4_digits_from_matricula(df: DataFrame) -> DataFrame:
-            return show_last_n_digits_of_column(df, xform_col, 4)
-
-        def save_upload_dataframe_as_csv(df: DataFrame) -> None:
-            return save_dataframe_to_csv(df, sink_file)
-
-        def choose_columns(df: DataFrame) -> DataFrame:
-            col_list = final_columns.split(',',-1)
-            return DataFrame(df.loc[:,col_list], columns=col_list)
-
-        functor_read_df_modify_mat_save_csv =  \
-            lazy_load_xform_save_csv(get_dataframe_from_csv,
-                                     save_upload_dataframe_as_csv,
-                                     functor(show_last_4_digits_from_matricula).map(choose_columns))
-        functor_read_df_modify_mat_save_csv(source_file)
 
     import sys
 
-    read_csv_remove_char_matricula_save_csv(str(sys.argv[1]), str(sys.argv[2]), str(sys.argv[3]), str(sys.argv[4]))
+    options = {True: lambda args: read_csv_remove_char_matricula_save_csv(
+        parameter_to_str(args[1]), parameter_to_str(args[2]),
+        parameter_to_str(args[3]), parameter_to_str(args[4])),
+                False: lambda _: test_xform()}
+    action = options[len(sys.argv) > 1]
+    action(sys.argv)
