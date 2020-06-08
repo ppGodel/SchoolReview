@@ -10,9 +10,9 @@ def github_get_commit_list_of_a_file(client_id: str, client_secret: str, site, u
     base_url = get_base_url("https://api.{site}/repos/{user}/{repo}/commits",
                             **{"site": site, "user": user, "repo": repo})
     parameters = map_parameters(
-        **{"client_id": client_id, "client_secret": client_secret, "path": file_path})
+        **{"path": file_path})
     url = get_url(base_url, parameters)
-    return get_response_json(url)
+    return get_response_json(url, client_id, client_secret)
 
 
 @lru_cache(maxsize=None)
@@ -23,10 +23,8 @@ def github_get_file_info(client_id: str, client_secret: str, site: str, user: st
             format(site=site, user=user, repo=urllib.parse.quote(repo), file=urllib.parse.quote(file_path))
     except TypeError:
         print(f"u: {user} r: {repo} p:{file_path}")
-        raise
-    parameters = map_parameters(**{"client_id": client_id, "client_secret": client_secret})
-    url = get_url(base_url, parameters)
-    return get_response_json(url)
+        return {}
+    return get_response_json(base_url, client_id, client_secret)
 
 
 def github_get_file(client_id: str, client_secret: str, site: str, user: str, repo: str, file_path: str) -> Optional[
@@ -46,9 +44,7 @@ def github_get_file(client_id: str, client_secret: str, site: str, user: str, re
 def github_get_repository_list(client_id: str, client_secret: str, site: str, user: str) -> Dict:
     base_url = get_base_url("https://api.{site}/users/{user}/repos",
                             **{"site": site, "user": user})
-    parameters = map_parameters(**{"client_id": client_id, "client_secret": client_secret})
-    url = get_url(base_url, parameters)
-    return get_response_json(url)
+    return get_response_json(base_url, client_id, client_secret)
 
 
 def github_get_repository_list_by(client_id: str, client_secret: str, site: str, user: str, prop: str) \

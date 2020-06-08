@@ -32,6 +32,15 @@ def get_response_json(url) -> Optional[Union[Dict, List[Dict]]]:
     return json
 
 
+@lru_cache(maxsize=None)
+def get_response_json(url: str, user: str, pswd: str) -> Optional[Union[Dict, List[Dict]]]:
+    response = requests.get(url, auth=(user, pswd))
+    json = None
+    if response.status_code >= 200 <= 250:
+        json = response.json()
+    return json
+
+
 def get_url(base_url: str, params: str):
     return "{base}?{parameters}".format(base=base_url, parameters=params)
 

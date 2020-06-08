@@ -27,6 +27,11 @@ class Practice:
     as_dir: bool
     score_function: score_function_type
 
+@dataclass
+class Course:
+    name: str
+    practices: List[Practice]
+
 
 def _check_and_review_practice(get_practice_list: Callable[[Practice],
                                                            List[Tuple[score_function_type,
@@ -40,7 +45,7 @@ def _check_and_review_practice(get_practice_list: Callable[[Practice],
     new_score = 0
     if actual_score < 8:
         practice_list = get_practice_list(practice)
-        new_score = check_and_review_practice(practice_list, row, practice)
+        new_score = check_and_review_practice(practice_list)
     return max([new_score, actual_score])
 
 
@@ -49,8 +54,7 @@ def review_practice_from_df(df: DataFrame, fn_check_and_review_row: Callable[[Se
     return df.apply(lambda row: fn_check_and_review_row(row), axis=1)
 
 
-def check_and_review_practice(practice_list: List[Tuple[score_function_type, str, PracticeFile]],
-                              row: Series, practice: Practice) -> Optional[int]:
+def check_and_review_practice(practice_list: List[Tuple[score_function_type, str, PracticeFile]]) -> Optional[int]:
     calif = score_practice(practice_list)
     if not calif:
         calif = 0
@@ -134,12 +138,12 @@ def search_in_repo_dir(fn_get_file_info_from_path: Callable[[str], Dict], practi
                        repo_path: str, directory_allowed: bool) \
         -> Optional[Union[List[Dict], Dict]]:
     file_info_match = search_dir_in_repo_dir(fn_get_file_info_from_path, practice_alias, repo_path)
-    if not directory_allowed:
-        if not file_info_match:
-            file_info_match = search_file_in_repo_dir(fn_get_file_info_from_path, practice_alias,
-                                                      repo_path)
-        else:
-            file_info_match = search_file_in_repo_dir(fn_get_file_info_from_path, practice_alias,
+    #if not directory_allowed:
+    if not file_info_match or not directory_allowed:
+        file_info_match = search_file_in_repo_dir(fn_get_file_info_from_path, practice_alias,
+                                                  repo_path)
+    else:
+        file_info_match = search_file_in_repo_dir(fn_get_file_info_from_path, practice_alias,
                                                       file_info_match["path"])
     return file_info_match
 

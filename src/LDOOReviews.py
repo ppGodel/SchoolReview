@@ -1,58 +1,52 @@
 from typing import List, Callable
 from pandas import DataFrame, read_csv
-from datetime import datetime
-from src.reviewer.git_retrivers import practice_summary, build_course_from_csv, \
-    review_class_by_practice
-from src.reviewer.github_request_client import github_get_repository_list_by
+
+from src.review_helper import format_df_for_upload, evaluate_class, base_create_repo_calif
+from src.reviewer.PracticeReviewer import Practice
+from src.reviewer.git_retrivers import get_querier_with_credentials
 from src.reviewer.scores.LDOOPracticeScores import ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, \
     ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9, ldoo_p10
+from src.utils.my_pandas_util import save_csv_df
 
 
-def create_repo_calif(querier: Callable, base_csv_path: str, target_csv_path: str) -> DataFrame:
-    base_columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido",
+def create_ldoo_repo_calif(querier: Callable, base_csv_path: str) -> DataFrame:
+    base_columns = ["Matricula", "Nombres", "Apellido Paterno", "Apellido Materno",
                     "Grupo"]
     new_columns = ["Matricula", "Nombre", "Primer apellido", "Segundo apellido", "Grupo"]
-    df_lbd = build_course_from_csv(querier(github_get_repository_list_by),
-                                   base_csv_path, 'Repositorio',
-                                   base_columns, new_columns)
-    df_lbd.to_csv(target_csv_path, sep=',', encoding='utf-8', index=False)
+    df_lbd = base_create_repo_calif(querier, read_csv(base_csv_path), list(zip(new_columns, base_columns)))
     return df_lbd
 
 
-def create_file_for_upload(get_df: Callable[[str], DataFrame], target_csv_path: str,
-                           upload_csv_path: str):
-    results_df = get_df(target_csv_path)
-    base_column_names = ["Matricula", "Grupo", "Practica1", "Practica2", "Practica3", "Practica4",
-                         "Practica5", "Practica6", "Practica7", "Practica8", "Practica9",
-                         "Practica10", "Total"]
-    new_df = results_df.loc[:, base_column_names]
-    new_df['Matricula'] = new_df['Matricula'].map(lambda x: str(x)[len(str(x))-4:len(str(x))])
-    new_df.to_csv(upload_csv_path, sep=',', encoding='utf-8', index=False)
+def format_ldoo_review_for_upload(base_df: DataFrame) -> DataFrame:
+    return format_df_for_upload(base_df,
+                                ["Matricula", "Grupo", "Practica1", "Practica2", "Practica3", "Practica4",
+                                 "Practica5", "Practica6", "Practica7", "Practica8", "Practica9",
+                                 "Practica10", "Total"],
+                                "Matricula",
+                                lambda x: str(x)[len(str(x))-4:len(str(x))])
 
 
-def evaluate_class(practices_list: List, config_path: str, target_csv_path: str,
-                   base_csv_path: str):
-    for practice in practices_list:
-        print("Reviewing: {} at {}".format(practice.name, datetime.now()))
-        review_class_by_practice(config_path, practice, target_csv_path, base_csv_path,
-                                 create_repo_calif)
-        print("Finish {} at {}".format(practice.name, datetime.now()))
-    results_df = read_csv(target_csv_path)
-    results_df["Total"] = sum([results_df[practice.name] for practice in practices_list])
-    results_df.to_csv(target_csv_path, sep=',', encoding='utf-8', index=False)
-    practice_summary(results_df["Total"])
+def evaluate_ldoo_course(practices_list: List[Practice], config_path: str, target_csv_path: str,
+                        base_csv_path: str) -> DataFrame:
+    def wrap_create_ldoo_class(querier: Callable, csv_path: str) -> Callable[[str], DataFrame]:
+        def create_ldoo_course() -> DataFrame:
+            return create_ldoo_repo_calif(querier, csv_path)
+        return create_ldoo_course
+
+    querier = get_querier_with_credentials(config_path)
+    return evaluate_class(practices_list, wrap_create_ldoo_class(querier, base_csv_path),
+                          querier, target_csv_path)
 
 
-practices = [ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9,
-             ldoo_p10]
-
-class_info_csv = "../Classes/LDOO_AD_19.csv"
-target_csv = "../Classes/LDOO_AD_19_calif.csv"
-credentials = '../test/resources/my_data.json'
-upload_csv = "../Classes/LDOO_AD_19_upload.csv"
 
 if __name__ == '__main__':
-    print('OK')
-    # evaluate_class(practices, credentials, target_csv, class_info_csv)
-    # create_file_for_upload(read_csv, target_csv, upload_csv)
-    print(class_info_csv)
+    practices = [ldoo_p1, ldoo_p2, ldoo_p3, ldoo_p4, ldoo_p5, ldoo_p6, ldoo_p7, ldoo_p8, ldoo_p9,
+                 ldoo_p10]
+    class_info_csv = "../Classes/LDOO_AD_19.csv"
+    target_csv = "../Classes/LDOO_AD_19_calif.csv"
+    credentials = '../test/resources/my_data.json'
+    upload_csv = "../Classes/LDOO_AD_19_upload.csv"
+    reviewed_practices = evaluate_ldoo_course(practices, credentials, target_csv, class_info_csv)
+    save_csv_df(reviewed_practices, target_csv)
+    upload_df = format_ldoo_review_for_upload(reviewed_practices)
+    save_csv_df(upload_df, upload_csv)

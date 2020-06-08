@@ -11,7 +11,7 @@ from src.reviewer.PracticeReviewer import Practice, review_practice_from_df, \
     score_function_type, PracticeFile, get_practice_files, _check_and_review_practice
 from src.reviewer.github_request_client import github_get_commit_list_of_a_file, \
     github_get_file_info
-from src.utils.pandas import parse_csv_df
+from src.utils.my_pandas_util import parse_csv_df, save_csv_df
 from src.utils.url import remove_protocol_from_url, get_response_content
 
 
@@ -49,21 +49,20 @@ def check_and_review_practice_from_git(fn_get_file_info: Callable[[str, str, str
     return _check_and_review_practice_from_git
 
 
-def review_class_by_practice(config_path: str, practice_info: Practice, target_csv_path: str,
-                             base_csv_path: str,
-                             create_repo_calif_df: Callable[[Callable, str, str], DataFrame]):
-    querier = get_querier_with_credentials(config_path)
+def review_class_by_practice(querier: Callable, practice_info: Practice, df_practices: DataFrame) -> Series:
+    return review_practice_from_df_from_git(df_practices, querier(github_get_file_info),
+                                            querier(github_get_commit_list_of_a_file),
+                                            get_response_content,
+                                            practice_info)
+
+
+def get_create_review_df(create_repo_calif_df: Callable[[], DataFrame], target_csv_path: str):
     try:
         df_lbd = parse_csv_df(target_csv_path)
     except FileNotFoundError:
-        df_lbd = create_repo_calif_df(querier, base_csv_path, target_csv_path)
-    practice_calif = review_practice_from_df_from_git(df_lbd, querier(github_get_file_info),
-                                                      querier(github_get_commit_list_of_a_file),
-                                                      get_response_content,
-                                                      practice_info)
-    df_lbd[practice_info.name] = practice_calif
-    df_lbd.to_csv(target_csv_path, sep=',', encoding='utf-8', index=False)
-    practice_summary(practice_calif)
+        df_lbd = create_repo_calif_df()
+        save_csv_df(df_lbd, target_csv_path)
+    return df_lbd
 
 
 class DFSaver(rx.core.Observer):
@@ -92,19 +91,19 @@ def rx_review_practice_from_df(df: DataFrame, fn_get_file_info: Callable[[str, s
 
 
 def practice_summary(practice_calif: Series):
-    print("Media: {}, \n Dist: \n{}".format(practice_calif.mean(),
+    print("Media: {}, \n Dist: {}\n".format(practice_calif.mean(),
                                             practice_calif.groupby(practice_calif).agg('count')))
 
 
 def build_course_from_csv(
         get_repo_list_by: Callable[[str, str, str], List[Dict]],
-        csv_path: str, git_column: str,
-        base_column_names: List, new_column_names: List):
-    students_df = pd.read_csv(csv_path)
+        students_df: DataFrame, git_column: str,
+        column_names_map: List[Tuple[str,str]]):
     dfr = process_df(get_repo_list_by, students_df, git_column)
     dfr.columns = ['repo_site', 'repo_user', 'repo_name']
-    base_df = students_df.loc[:, base_column_names]
-    base_df.rename(columns=dict(zip(base_column_names, new_column_names)), inplace=True)
+    existing_columns = [t[1] for t in column_names_map]
+    base_df = students_df.reindex(existing_columns, axis='columns')
+    base_df.rename(columns=dict(column_names_map), inplace=True)
     new_df = pd.concat([base_df, dfr], axis=1)
     return new_df
 
