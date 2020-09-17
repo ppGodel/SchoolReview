@@ -1,15 +1,19 @@
 import requests
 import re
+from typing import List
 
-practiceNames = ["Practica", "P", "Tarea", "Ejercicio", "P"]
-repoNames = ["/LDOO_EJ_19", "/LDOO", "/LDOO_EJ_2019", "/LDOO_Enero_Julio_19", "/LDOO_Enero_Julio_2019"]
-
-
-def get_practice_name(n):
-    result = [x + str(n) for x in practiceNames]
-    if n < 10:
-        [result.append(x + "0" + str(n)) for x in practiceNames]
+def generate_practice_name_list_from_template_number(practice_name_template: List[str],
+                                                     practice_number: int) -> List[str]:
+    result = [x + str(practice_number) for x in practice_name_template]
+    if practice_number < 10:
+        [result.append(x + "0" + str(practice_number)) for x in practice_name_template]
     return result
+
+local_practice_names = ["Practica", "P", "Tarea", "Ejercicio", "P"]
+possible_repositories_names = ["/LDOO_EJ_19", "/LDOO", "/LDOO_EJ_2019", "/LDOO_Enero_Julio_19", "/LDOO_Enero_Julio_2019"]
+
+def generate_practice_name_list_from_local(practice_number: int) -> List[str]:
+    return generate_practice_name_list_from_template_number(local_practice_names, practice_number)
 
 
 def repository_formatter(repo):
@@ -23,7 +27,7 @@ def repository_formatter(repo):
         else:
             match_user = re.search(r"https?://(\w*\.)+\w*/\w*", repo, re.M | re.I)
             if match_user:
-                [links_to_test.append(repo + x) for x in repoNames]
+                [links_to_test.append(repo + x) for x in possible_repositories_names]
     return links_to_test
 
 
@@ -57,7 +61,7 @@ def practice_checker(url, practice):
     result = False
     repo = get_repository(url)
     if repo != "":
-        for practice_name in get_practice_name(practice):
+        for practice_name in generate_practice_name_list_from_local(practice):
             practice_to_check = repo + "/blob/master/" + practice_name
             print(practice_to_check)
             request = requests.get(practice_to_check)
@@ -69,7 +73,5 @@ def practice_checker(url, practice):
 
 def check_equal(arr1, arr2):
     return len(arr1) == len(arr2) and sorted(arr1) == sorted(arr2)
-
-
 
 

@@ -28,11 +28,10 @@ class TestPracticeChecker(TestCase):
         self.assertTrue(repository_check("https://github.com/ppGodel/LDOO_EJ_19"))
 
     def test_get_pn(self):
-        self.assertTrue(check_equal(get_practice_name(1),
-                                    ["Practica1", "P1", "Tarea1", "Ejercicio1", "P1", "Practica01", "P01", "Tarea01",
-                                     "Ejercicio01",
-                                     "P01"]))
-        self.assertTrue(check_equal(get_practice_name(10), ["Practica10", "P10", "Tarea10", "Ejercicio10", "P10"]))
+        self.assertTrue(check_equal(generate_practice_name_list_from_local(1),
+                                    ["Practica1", "P1", "Tarea1", "Ejercicio1", "P1", "Practica01",
+                                     "P01", "Tarea01", "Ejercicio01", "P01"]))
+        self.assertTrue(check_equal(generate_practice_name_list_from_local(10), ["Practica10", "P10", "Tarea10", "Ejercicio10", "P10"]))
 
     def test_url_check(self):
         def assert_check_repository(expected, value):
