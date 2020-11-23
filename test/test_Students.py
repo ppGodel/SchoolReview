@@ -1,8 +1,8 @@
 import json
 from unittest import TestCase
 
-from reviewer.git_retrivers import build_student, build_course_from_csv, get_querier
-from reviewer.github_request_client import github_get_repository_list_by
+from src.reviewer.git_retrivers import build_student, build_course_from_csv, get_querier
+from src.reviewer.github_request_client import github_get_repository_list_by
 
 LDOO = 'LDOO'
 LBD = 'LBD'
