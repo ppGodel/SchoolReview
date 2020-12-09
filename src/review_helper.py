@@ -6,6 +6,8 @@ from src.utils.my_pandas_util import parse_csv_df
 from src.reviewer.git_retrivers import build_course_from_csv, review_class_by_practice, practice_summary, \
     get_create_review_df
 from src.reviewer.github_request_client import github_get_repository_list_by
+from statistics import median
+from src.reviewer.PracticeReviewer import Practice, PracticeFile, Course
 
 
 def base_create_repo_calif(querier: Callable, students_df: DataFrame, column_names_map: List[Tuple[str, str]]) -> DataFrame:
@@ -25,12 +27,12 @@ def evaluate_class(practices_list: List, create_repo_calif: Callable[[str], Data
     course_practices_df = get_create_review_df(create_repo_calif, target_csv_path)
     for practice in practices_list:
         review_practice(course_practices_df, practice, querier)
-    course_practices_df["Total"] = sum([course_practices_df[practice.name] for practice in practices_list])
+    course_practices_df["Total"] = sum([course_practices_df[practice.name] for practice in practices_list])/len(practices_list)
     practice_summary(course_practices_df["Total"])
     return course_practices_df
 
 
-def review_practice(course_practices_df, practice, querier):
+def review_practice(course_practices_df, practice: Practice, querier):
     print("Reviewing: {} at {}".format(practice.name, datetime.now()))
     practice_calif = review_class_by_practice(querier, practice, course_practices_df)
     print("Finish {} at {}".format(practice.name, datetime.now()))

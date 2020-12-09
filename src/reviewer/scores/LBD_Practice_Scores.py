@@ -216,7 +216,7 @@ def score_pia_lbd(end_date: datetime, start_date: datetime, limit_date: datetime
     return score
 
 
-lbd_min_review = partial(score_practice_lbd, end_date=datetime(2019, 11, 11, 23, 59),
+lbd_min_review = partial(score_practice_lbd, end_date=datetime(2020, 11, 26, 23, 59),
                          score_file=(lambda x, y: 7))
 
 lbd_pia_min_review = partial(score_pia_lbd, end_date=datetime(2019, 11, 8, 23, 59),
@@ -235,14 +235,15 @@ lbd_2nd_PIA_review = partial(score_practice_lbd,
 
 one_week = timedelta(days=7)
 two_weeks = timedelta(days=14)
-first_class = datetime(2019, 8, 24, 0, 0) + one_week
+three_weeks = timedelta(days=21)
+first_class = datetime(2020, 9, 17, 0, 0) + two_weeks
 
 
 def get_score_function_for_practice(practice_begin_date: datetime) -> \
         Callable[[str, Practice], int]:
     return partial(lbd_min_review,
                    start_date=practice_begin_date,
-                   limit_date=practice_begin_date + two_weeks)
+                   limit_date=practice_begin_date + three_weeks)
 
 
 def get_score_function_for_pia(pia_begin_date: datetime) -> \
@@ -263,7 +264,7 @@ lbd_p3 = Practice("Practica3", [p3_re], [p3_re, r'script'], True,
 fourth_class = third_class + one_week
 lbd_p4 = Practice("Practica4", [p4_re], [p4_re, r'script'], True,
                   get_score_function_for_practice(fourth_class))
-fifth_class = fourth_class + two_weeks
+fifth_class = fourth_class + one_week
 lbd_p5 = Practice("Practica5", [p5_re], [p5_re, r'script'], True,
                   get_score_function_for_practice(fifth_class))
 sixth_class = fifth_class + one_week

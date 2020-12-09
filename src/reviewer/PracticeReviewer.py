@@ -87,7 +87,7 @@ def valid_row(row: Series, required_columns: List[str]) -> bool:
 def score_practice(practice_files: List[Tuple[score_function_type, str, PracticeFile]]) -> int:
     scores = []
     for score_fn, p_name, p_file_info in practice_files:
-        score = score_fn(practice_name=p_name, file=p_file_info)
+        score = score_fn(practice_name=p_name, practice_file=p_file_info)
         scores.append(score)
     return max(scores, default=0)
 
@@ -138,13 +138,15 @@ def search_in_repo_dir(fn_get_file_info_from_path: Callable[[str], Dict], practi
                        repo_path: str, directory_allowed: bool) \
         -> Optional[Union[List[Dict], Dict]]:
     file_info_match = search_dir_in_repo_dir(fn_get_file_info_from_path, practice_alias, repo_path)
-    #if not directory_allowed:
-    if not file_info_match or not directory_allowed:
-        file_info_match = search_file_in_repo_dir(fn_get_file_info_from_path, practice_alias,
-                                                  repo_path)
+    if file_info_match:
+        if directory_allowed:
+            return file_info_match #file_info_match = fn_get_file_info_from_path(file_info_match["path"]) # List[Dict]
+        else:
+            file_info_match = search_file_in_repo_dir(fn_get_file_info_from_path, practice_alias,
+                                                      file_info_match["path"])
     else:
         file_info_match = search_file_in_repo_dir(fn_get_file_info_from_path, practice_alias,
-                                                      file_info_match["path"])
+                                                  repo_path)
     return file_info_match
 
 
@@ -172,8 +174,8 @@ def search_file_in_repo_dir(fn_get_file_info_from_path: Callable[[str], Dict], p
 def search_dir_in_repo_dir(fn_get_file_info_from_path: Callable[[str], Dict], practice_alias: str,
                            repo_path: str) -> Optional[Dict]:
     try:
-        files_info = [file for file in fn_get_file_info_from_path(repo_path) if
-                      file["type"] == "dir"]
+        files_info = [file_info for file_info in fn_get_file_info_from_path(repo_path) if
+                      file_info["type"] == "dir"]
     except Exception:
         print("Path info not found: {}".format(repo_path))
         files_info = []
